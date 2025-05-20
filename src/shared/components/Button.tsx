@@ -17,11 +17,24 @@ const Button: React.FC<CustomButtonProps> = ({
   className,
   ...props
 }) => {
-  // Custom background and focus styles
-  const customStyleClasses =
-    "bg-purple-800/80 hover:bg-purple-800/90 focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 text-white";
+  // Combined style classes from both the custom styles and the global styles
 
-  // Border radius - consistent 4px across all device sizes
+  // Base styles from index.css, now applied to the component
+  const baseStyleClasses =
+    "font-medium font-inherit transition-colors duration-250 cursor-pointer";
+
+  // Border styles incorporating the global button styles
+  const borderClasses =
+    "rounded-lg border border-solid border-transparent hover:border-[#646cff]";
+
+  // Focus styles from the global CSS
+  const focusClasses =
+    "focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-purple-600 focus:ring-opacity-50";
+
+  // Custom background and text colors with dark/light mode support
+  const colorClasses =
+    "bg-[#1a1a1a] hover:bg-purple-800/90 text-white dark:bg-purple-800/80 dark:hover:bg-purple-800/90 light:bg-[#f9f9f9] light:text-black";
+  // Border radius - consistent with both designs
   const borderRadiusClasses = "rounded";
 
   // Device-specific responsive styles following requirements:
@@ -45,10 +58,12 @@ const Button: React.FC<CustomButtonProps> = ({
   // Ensure adequate touch target for accessibility
   const touchTargetClasses =
     "min-h-[44px] min-w-[44px] md:min-h-[48px] md:min-w-[48px]";
-
   // Combine all classes
   const combinedClasses = `
-    ${customStyleClasses}
+    ${baseStyleClasses}
+    ${borderClasses}
+    ${focusClasses}
+    ${colorClasses}
     ${borderRadiusClasses}
     ${responsiveClasses}
     ${touchTargetClasses}

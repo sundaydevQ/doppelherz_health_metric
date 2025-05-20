@@ -62,7 +62,7 @@ const ResponsiveNavBar: React.FC = () => {
               {/* Icon when menu is closed */}
               {!isMenuOpen ? (
                 <svg
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -78,7 +78,7 @@ const ResponsiveNavBar: React.FC = () => {
                 </svg>
               ) : (
                 <svg
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

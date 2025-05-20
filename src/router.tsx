@@ -1,10 +1,10 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 
-// Import your page components
-import RootLayout from "./components/layout/RootLayout";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import SurveyPage from "./pages/SurveyPage";
+// Import your page components using barrel files
+import { RootLayout } from "./shared/layouts";
+import { HomePage } from "./features/home";
+import { LoginPage } from "./features/auth";
+import { SurveyPage } from "./features/survey";
 
 // Placeholder for authentication check
 // We will replace this with actual auth logic later

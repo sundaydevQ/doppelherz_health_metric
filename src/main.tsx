@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 import "./index.css";
 import { router } from "./router";
-import { AuthProvider } from "./contexts/AuthContext"; // Import AuthProvider
+import { AuthProvider } from "./shared/contexts"; // Import using barrel file
 import { HeroUIProvider } from "@heroui/react";
 
 const rootElement = document.getElementById("root")!;

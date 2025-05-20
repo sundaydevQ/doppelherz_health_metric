@@ -1,7 +1,7 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import type { CredentialResponse } from "@react-oauth/google";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../../shared/hooks";
 import { useNavigate, useSearch, useRouterState } from "@tanstack/react-router";
 import { Card } from "@heroui/react"; // Import HeroUI components
 

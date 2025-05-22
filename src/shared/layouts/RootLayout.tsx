@@ -10,6 +10,7 @@ const RootLayout: React.FC = () => {
 
       {/* Main Content - Full width with top padding for navbar */}
       <main className="flex-grow w-full box-border">
+        <div className="h-16 lg:h-[72px]"></div>
         <Outlet />
       </main>
     </div>

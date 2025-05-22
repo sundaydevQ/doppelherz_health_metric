@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:sit": "vite --mode sit",
+    "dev:sit": "vite --mode sit --open",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "^2.7.8",
     "@react-oauth/google": "^0.12.2",
+    "@tabler/icons-react": "^3.33.0",
     "@tanstack/react-router": "^1.120.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

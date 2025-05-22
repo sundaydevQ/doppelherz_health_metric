@@ -7,6 +7,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: false, // or 'class' if you want to enable it with class
   theme: {
     screens: {
       sm: "640px",
@@ -24,7 +25,11 @@ export default {
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Roboto", "sans-serif"],
+      },
+    },
   },
   plugins: [heroui()],
 };

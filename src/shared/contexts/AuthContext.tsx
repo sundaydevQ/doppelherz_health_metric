@@ -5,8 +5,6 @@ import React, {
   type ReactNode,
 } from "react";
 import { GoogleOAuthProvider, googleLogout } from "@react-oauth/google";
-import type { CredentialResponse } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode"; // Import jwtDecode
 
 // Define what user information you want to store
 interface User {
@@ -16,24 +14,13 @@ interface User {
   picture?: string;
 }
 
-interface DecodedJwtToken {
-  sub: string; // Subject (user ID)
-  email: string;
-  name: string;
-  picture: string;
-  exp?: number; // Expiration time
-  iat?: number; // Issued at
-  iss?: string; // Issuer
-  aud?: string; // Audience
-  // Add any other fields you expect in the token
-}
-
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (credentialResponse: CredentialResponse) => void;
+  login: (loggedInUser: User) => void; // Changed to accept User object
   logout: () => void;
+  setIsLoading: (loading: boolean) => void; // Added setIsLoading
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -67,34 +54,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (credentialResponse: CredentialResponse) => {
+  const login = (loggedInUser: User) => {
+    // No longer expecting CredentialResponse or decoding JWT here
+    // The User object is now passed directly from LoginPage
     setIsLoading(true);
-    if (credentialResponse.credential) {
-      try {
-        const idToken = credentialResponse.credential;
-
-        // Use jwtDecode to decode the token
-        const decodedToken: DecodedJwtToken = jwtDecode(idToken);
-
-        const loggedInUser: User = {
-          id: decodedToken.sub, // 'sub' is typically the user ID
-          email: decodedToken.email,
-          name: decodedToken.name,
-          picture: decodedToken.picture,
-        };
-        setUser(loggedInUser);
-        localStorage.setItem("user", JSON.stringify(loggedInUser));
-        localStorage.setItem("isAuthenticated", "true"); // For router placeholder
-      } catch (error) {
-        console.error("Login error:", error);
-        setUser(null);
-        localStorage.removeItem("user");
-        localStorage.removeItem("isAuthenticated");
-      }
-    } else {
-      console.error("Login failed: No credential received.");
+    try {
+      setUser(loggedInUser);
+      localStorage.setItem("user", JSON.stringify(loggedInUser));
+      localStorage.setItem("isAuthenticated", "true");
+      console.log("User logged in:", loggedInUser);
+    } catch (error) {
+      console.error("Error in login function:", error);
+      setUser(null);
+      localStorage.removeItem("user");
+      localStorage.removeItem("isAuthenticated");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const logout = () => {
@@ -106,6 +82,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isAuthenticated = !!user;
+
+  // Function to allow LoginPage to set loading state
+  const contextSetIsLoading = (loading: boolean) => {
+    setIsLoading(loading);
+  };
 
   if (
     !GOOGLE_CLIENT_ID ||
@@ -136,7 +117,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, isAuthenticated, login, logout }}
+      value={{
+        user,
+        isLoading,
+        isAuthenticated,
+        login,
+        logout,
+        setIsLoading: contextSetIsLoading,
+      }}
     >
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         {children}

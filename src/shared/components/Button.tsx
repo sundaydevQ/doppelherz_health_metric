@@ -4,36 +4,79 @@ import {
   type ButtonProps as HeroButtonProps,
 } from "@heroui/react"; // Import HeroUI Button and its props
 
-// Extend HeroButtonProps and allow for other HTML button attributes
-interface CustomButtonProps
-  extends HeroButtonProps,
-    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof HeroButtonProps> {
-  children: React.ReactNode;
-  // href is already part of HeroButtonProps if it's linkable
+// Define custom props
+type CustomColorStyle = "default" | "primary" | "secondary" | "light";
+type ButtonVariant = "solid" | "bordered" | "light";
+
+// Function to map variant to colorStyle
+function mapVariantToColorStyle(variant: ButtonVariant): CustomColorStyle {
+  switch (variant) {
+    case "solid":
+      return "primary";
+    case "bordered":
+      return "secondary";
+    case "light":
+      return "light";
+    default:
+      return "default";
+  }
 }
 
-const Button: React.FC<CustomButtonProps> = ({
+interface CustomButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  colorStyle?: CustomColorStyle;
+  variant?: ButtonVariant; // Add variant prop for compatibility with existing code
+  href?: string;
+  onClick?: () => void;
+}
+
+const Button = ({
   children,
-  className,
+  className = "",
+  colorStyle = "default",
+  variant, // Add variant prop
   ...props
-}) => {
+}: CustomButtonProps & Omit<HeroButtonProps, "colorStyle" | "variant">) => {
+  // Map variant prop to colorStyle if specified
+  const effectiveColorStyle = variant
+    ? mapVariantToColorStyle(variant)
+    : colorStyle;
   // Combined style classes from both the custom styles and the global styles
 
   // Base styles from index.css, now applied to the component
   const baseStyleClasses =
     "font-medium font-inherit transition-colors duration-250 cursor-pointer";
-
   // Border styles incorporating the global button styles
   const borderClasses =
     "rounded-lg border border-solid border-transparent hover:border-[#646cff]";
-
   // Focus styles from the global CSS
-  const focusClasses =
-    "focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-purple-600 focus:ring-opacity-50";
+  // const focusClasses =
+  //   "focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-purple-600 focus:ring-opacity-50";
+  // Custom background and text colors based on colorStyle
+  let colorClasses = "";
+  // Use effectiveColorStyle instead of colorStyle to respect the variant prop
+  switch (effectiveColorStyle) {
+    case "primary":
+      colorClasses =
+        "bg-purple-800/80 text-white hover:bg-purple-800/90 hover:text-white";
+      break;
+    case "secondary":
+      colorClasses =
+        "bg-white text-purple-800 border-purple-800 hover:bg-purple-50";
+      break;
+    case "light":
+      colorClasses =
+        "bg-transparent text-neutral-600 border-transparent hover:bg-gray-100 hover:text-black";
+      break;
+    case "default":
+    default:
+      // Using rgba(92, 36, 130, 0.85) as the default color
+      colorClasses =
+        "bg-[rgba(92,36,130,0.85)] text-white hover:bg-[rgba(92,36,130,0.95)] hover:text-white";
+      break;
+  }
 
-  // Custom background and text colors with dark/light mode support
-  const colorClasses =
-    "bg-[#1a1a1a] hover:bg-purple-800/90 text-white dark:bg-purple-800/80 dark:hover:bg-purple-800/90 light:bg-[#f9f9f9] light:text-black";
   // Border radius - consistent with both designs
   const borderRadiusClasses = "rounded";
 
@@ -62,7 +105,6 @@ const Button: React.FC<CustomButtonProps> = ({
   const combinedClasses = `
     ${baseStyleClasses}
     ${borderClasses}
-    ${focusClasses}
     ${colorClasses}
     ${borderRadiusClasses}
     ${responsiveClasses}
@@ -70,7 +112,7 @@ const Button: React.FC<CustomButtonProps> = ({
     ${className || ""}
   `
     .trim()
-    .replace(/\\s+/g, " ");
+    .replace(/\\s+/g, " "); // Pass the props directly
 
   return (
     <HeroButton className={combinedClasses} {...props}>

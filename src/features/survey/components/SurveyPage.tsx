@@ -1,155 +1,216 @@
 import React, { useState } from "react";
-import { Button } from "../../../shared/components";
+import type { Step, SurveyFormData } from "./types";
+import StepProgress from "./StepProgress";
+import BasicInfoForm from "./steps/BasicInfoForm";
+import SurveyQuestionsForm from "./steps/SurveyQuestionsForm";
+import HealthInfoForm from "./steps/HealthInfoForm";
+import DietAssessmentForm from "./steps/DietAssessmentForm";
+import PhysicalActivityForm from "./steps/PhysicalActivityForm";
+import SurveyResults from "./steps/SurveyResults";
+
+// Initial steps data
+const initialSteps: Step[] = [
+  { id: "01", name: "Thông tin cơ bản", status: "current" },
+  { id: "02", name: "Thực hiện khảo sát", status: "upcoming" },
+  { id: "03", name: "Thông tin sức khỏe", status: "upcoming" },
+  { id: "04", name: "Đánh giá chế độ ăn", status: "upcoming" },
+  { id: "05", name: "Hoạt động thể chất", status: "upcoming" },
+  { id: "06", name: "Xem kết quả", status: "upcoming" },
+];
 
 const SurveyPage: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3;
+  // State for steps
+  const [steps, setSteps] = useState<Step[]>(initialSteps);
 
+  // Track the current step index (0-based)
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+
+  // Different form data for each step
+  const [formData, setFormData] = useState<SurveyFormData>({
+    // Step 1: Basic information
+    step1: {
+      name: "Andrés Alberto",
+      firstName: "Avalos",
+      lastName: "Aguilar",
+      dob: "",
+      email: "",
+      income: "",
+    },
+    // Step 2: Survey
+    step2: {
+      question1: "",
+      question2: "",
+      question3: "",
+    },
+    // Step 3: Health information
+    step3: {
+      height: "",
+      weight: "",
+      bloodPressure: "",
+      chronicConditions: "",
+    },
+    // Step 4: Diet assessment
+    step4: {
+      mealsPerDay: "",
+      waterIntake: "",
+      dietaryRestrictions: "",
+    },
+    // Step 5: Physical activity
+    step5: {
+      exerciseFrequency: "",
+      exerciseType: "",
+      activityLevel: "",
+    },
+    // Step 6: Review (no form inputs)
+    step6: {},
+  });
+  // Helper function to handle input changes for the current step
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const currentStepKey = `step${
+      currentStepIndex + 1
+    }` as keyof SurveyFormData;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [currentStepKey]: {
+        ...prevFormData[currentStepKey],
+        [name]: value,
+      },
+    }));
+  };
+
+  // Handle next step
   const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+    if (currentStepIndex < steps.length - 1) {
+      // Update step statuses
+      const updatedSteps = [...steps];
+      updatedSteps[currentStepIndex].status = "complete";
+      updatedSteps[currentStepIndex + 1].status = "current";
+
+      setSteps(updatedSteps);
+      setCurrentStepIndex(currentStepIndex + 1);
+    }
+  };
+  // Handle back step
+  const handleBack = () => {
+    if (currentStepIndex > 0) {
+      // Update step statuses
+      const updatedSteps = [...steps];
+      updatedSteps[currentStepIndex].status = "upcoming";
+      updatedSteps[currentStepIndex - 1].status = "current";
+
+      setSteps(updatedSteps);
+      setCurrentStepIndex(currentStepIndex - 1);
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+  // Handle navigation to a specific step
+  const goToStep = (stepIndex: number) => {
+    if (stepIndex < currentStepIndex && stepIndex >= 0) {
+      // Only allow going back to previous completed steps, not forward
+      const updatedSteps = [...steps];
+
+      // Mark the current step as 'upcoming'
+      updatedSteps[currentStepIndex].status = "upcoming";
+
+      // Mark all steps after the target as 'upcoming'
+      for (let i = stepIndex + 1; i < steps.length; i++) {
+        if (i !== currentStepIndex) {
+          // Skip current step as we already updated it
+          updatedSteps[i].status = "upcoming";
+        }
+      }
+
+      // Mark the target step as 'current'
+      updatedSteps[stepIndex].status = "current";
+
+      setSteps(updatedSteps);
+      setCurrentStepIndex(stepIndex);
     }
   };
 
-  const handleSubmit = () => {
-    alert("Survey submitted successfully!");
-    // Here you would typically send the survey data to your backend
+  // Handle completion of the survey
+  const handleComplete = () => {
+    alert("Khảo sát đã được gửi thành công!");
+    // Here you would typically submit the data to your backend
   };
 
+  // Render form based on current step
+  const renderCurrentStepForm = () => {
+    switch (currentStepIndex) {
+      case 0:
+        return (
+          <BasicInfoForm
+            formData={formData.step1}
+            handleChange={handleChange}
+            handleNext={handleNext}
+          />
+        );
+      case 1:
+        return (
+          <SurveyQuestionsForm
+            formData={formData.step2}
+            handleChange={handleChange}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        );
+      case 2:
+        return (
+          <HealthInfoForm
+            formData={formData.step3}
+            handleChange={handleChange}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        );
+      case 3:
+        return (
+          <DietAssessmentForm
+            formData={formData.step4}
+            handleChange={handleChange}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        );
+      case 4:
+        return (
+          <PhysicalActivityForm
+            formData={formData.step5}
+            handleChange={handleChange}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        );
+      case 5:
+        return (
+          <SurveyResults
+            formData={formData}
+            handleBack={handleBack}
+            handleComplete={handleComplete}
+          />
+        );
+      default:
+        return null;
+    }
+  };
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Health Assessment Survey</h1>
-      <p className="mb-8">
-        Please complete the survey to get personalized health insights.
-      </p>
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+      <StepProgress
+        steps={steps}
+        currentStepIndex={currentStepIndex}
+        handleBack={handleBack}
+        goToStep={goToStep}
+      />
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="text-xl font-semibold">
-            Step {currentStep} of {totalSteps}
-          </span>
-          <span className="text-sm text-gray-500">
-            {Math.round((currentStep / totalSteps) * 100)}% Complete
-          </span>
+      {/* Main Content Area */}
+      <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
+        {/* Render the current step form */}
+        <div className="max-w-lg mx-auto lg:mx-0">
+          {renderCurrentStepForm()}
         </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-          <div
-            className="bg-purple-800 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-          ></div>
-        </div>
-
-        {/* Survey content - changes based on current step */}
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Basic Information</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium">Age</label>
-                <input
-                  type="number"
-                  className="w-full border rounded-md p-2"
-                  placeholder="Your age"
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Biological Sex
-                </label>
-                <select className="w-full border rounded-md p-2">
-                  <option value="">Select option</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Lifestyle Assessment</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Exercise Frequency (days per week)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="7"
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Sleep Duration (hours per night)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="24"
-                  step="0.5"
-                  className="w-full border rounded-md p-2"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Health Concerns</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Primary Health Concerns
-                </label>
-                <textarea
-                  className="w-full border rounded-md p-2"
-                  rows={3}
-                  placeholder="Describe any health issues you're experiencing"
-                ></textarea>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="consent" className="mr-2" />
-                <label htmlFor="consent" className="text-sm">
-                  I consent to my data being used for health assessment purposes
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation buttons using our custom Button component */}
-        <div className="flex justify-between mt-8">
-          <Button
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            variant="bordered"
-            className={currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""}
-          >
-            Previous
-          </Button>
-
-          {currentStep < totalSteps ? (
-            <Button onClick={handleNext} variant="solid">
-              Next
-            </Button>
-          ) : (
-            <Button onClick={handleSubmit} variant="solid">
-              Submit
-            </Button>
-          )}
-        </div>
-      </div>
+      </main>
     </div>
   );
 };

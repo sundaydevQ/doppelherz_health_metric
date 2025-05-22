@@ -1,0 +1,684 @@
+import React, { useState } from "react";
+import { ChevronLeftIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+
+// Define step status type
+type StepStatus = "complete" | "current" | "upcoming";
+
+// Define step type
+interface Step {
+  id: string;
+  name: string;
+  status: StepStatus;
+}
+
+// Initial steps data
+const initialSteps: Step[] = [
+  { id: "01", name: "Thông tin cơ bản", status: "current" },
+  { id: "02", name: "Thực hiện khảo sát", status: "upcoming" },
+  { id: "03", name: "Thông tin sức khỏe", status: "upcoming" },
+  { id: "04", name: "Đánh giá chế độ ăn", status: "upcoming" },
+  { id: "05", name: "Hoạt động thể chất", status: "upcoming" },
+  { id: "06", name: "Xem kết quả", status: "upcoming" },
+];
+
+interface InputFieldProps {
+  label: string;
+  placeholder: string;
+  type?: string;
+  id: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  hasIcon?: boolean;
+}
+
+const InputField: React.FC<InputFieldProps> = ({
+  label,
+  placeholder,
+  type = "text",
+  id,
+  value,
+  onChange,
+  hasIcon = false,
+}) => (
+  <div>
+    <label
+      htmlFor={id}
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
+      {label}
+    </label>
+    <div className="relative">
+      <input
+        type={type}
+        id={id}
+        name={id}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm ${
+          hasIcon ? "pr-10" : ""
+        }`}
+      />
+      {hasIcon && (
+        <CalendarDaysIcon className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+      )}
+    </div>
+  </div>
+);
+
+const SurveyPage: React.FC = () => {
+  // State for steps
+  const [steps, setSteps] = useState<Step[]>(initialSteps);
+  
+  // Track the current step index (0-based)
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  
+  // Different form data for each step
+  const [formData, setFormData] = useState({
+    // Step 1: Basic information
+    step1: {
+      name: "Andrés Alberto",
+      firstName: "Avalos",
+      lastName: "Aguilar",
+      dob: "",
+      email: "",
+      income: "",
+    },
+    // Step 2: Survey
+    step2: {
+      question1: "",
+      question2: "",
+      question3: "",
+    },
+    // Step 3: Health information
+    step3: {
+      height: "",
+      weight: "",
+      bloodPressure: "",
+      chronicConditions: "",
+    },
+    // Step 4: Diet assessment
+    step4: {
+      mealsPerDay: "",
+      waterIntake: "",
+      dietaryRestrictions: "",
+    },
+    // Step 5: Physical activity
+    step5: {
+      exerciseFrequency: "",
+      exerciseType: "",
+      activityLevel: "",
+    },
+    // Step 6: Review (no form inputs)
+    step6: {}
+  });
+
+  // Helper function to handle input changes for the current step
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const currentStepKey = `step${currentStepIndex + 1}` as keyof typeof formData;
+    
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [currentStepKey]: {
+        ...(prevFormData[currentStepKey] as any),
+        [name]: value
+      }
+    }));
+  };
+
+  // Handle next step
+  const handleNext = () => {
+    if (currentStepIndex < steps.length - 1) {
+      // Update step statuses
+      const updatedSteps = [...steps];
+      updatedSteps[currentStepIndex].status = "complete";
+      updatedSteps[currentStepIndex + 1].status = "current";
+      
+      setSteps(updatedSteps);
+      setCurrentStepIndex(currentStepIndex + 1);
+    }
+  };
+
+  // Handle back step
+  const handleBack = () => {
+    if (currentStepIndex > 0) {
+      // Update step statuses
+      const updatedSteps = [...steps];
+      updatedSteps[currentStepIndex].status = "upcoming";
+      updatedSteps[currentStepIndex - 1].status = "current";
+      
+      setSteps(updatedSteps);
+      setCurrentStepIndex(currentStepIndex - 1);
+    }
+  };
+
+  // Render form based on current step
+  const renderCurrentStepForm = () => {
+    switch (currentStepIndex) {
+      case 0:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Thông tin cơ bản
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Chúng tôi cần xác thực thông tin của bạn, vì vậy chúng tôi cần một số dữ liệu cá nhân.
+              </p>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              className="space-y-6 mt-8"
+            >
+              <InputField
+                label="Tên"
+                id="name"
+                placeholder="Andrés Alberto"
+                value={formData.step1.name}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Họ"
+                id="firstName"
+                placeholder="Avalos"
+                value={formData.step1.firstName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Tên đệm"
+                id="lastName"
+                placeholder="Aguilar"
+                value={formData.step1.lastName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Ngày sinh"
+                id="dob"
+                placeholder="DD / MM / YYYY"
+                value={formData.step1.dob}
+                onChange={handleChange}
+                hasIcon={true}
+              />
+              <InputField
+                label="Email"
+                id="email"
+                type="email"
+                placeholder="E.g. sample@email.com"
+                value={formData.step1.email}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Thu nhập hàng tháng"
+                id="income"
+                placeholder="E.g. 15,000,000 VND"
+                value={formData.step1.income}
+                onChange={handleChange}
+              />
+
+              <button
+                type="submit"
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Tiếp theo
+              </button>
+            </form>
+          </>
+        );
+      case 1:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Thực hiện khảo sát
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Vui lòng trả lời các câu hỏi về thói quen hàng ngày của bạn.
+              </p>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              className="space-y-6 mt-8"
+            >
+              <InputField
+                label="Bạn ngủ bao nhiêu giờ mỗi ngày?"
+                id="question1"
+                placeholder="Ví dụ: 8 giờ"
+                value={formData.step2.question1}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Bạn có thường xuyên tập thể dục không?"
+                id="question2"
+                placeholder="Ví dụ: 3 lần/tuần"
+                value={formData.step2.question2}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Bạn uống bao nhiêu nước mỗi ngày?"
+                id="question3"
+                placeholder="Ví dụ: 2 lít"
+                value={formData.step2.question3}
+                onChange={handleChange}
+              />
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Tiếp theo
+                </button>
+              </div>
+            </form>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Thông tin sức khỏe
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Vui lòng cung cấp thông tin sức khỏe cơ bản của bạn.
+              </p>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              className="space-y-6 mt-8"
+            >
+              <InputField
+                label="Chiều cao (cm)"
+                id="height"
+                placeholder="Ví dụ: 170"
+                value={formData.step3.height}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Cân nặng (kg)"
+                id="weight"
+                placeholder="Ví dụ: 65"
+                value={formData.step3.weight}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Huyết áp"
+                id="bloodPressure"
+                placeholder="Ví dụ: 120/80"
+                value={formData.step3.bloodPressure}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Bệnh mãn tính (nếu có)"
+                id="chronicConditions"
+                placeholder="Ví dụ: Tiểu đường, cao huyết áp"
+                value={formData.step3.chronicConditions}
+                onChange={handleChange}
+              />
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Tiếp theo
+                </button>
+              </div>
+            </form>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Đánh giá chế độ ăn
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Vui lòng chia sẻ thông tin về chế độ ăn của bạn.
+              </p>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              className="space-y-6 mt-8"
+            >
+              <InputField
+                label="Số bữa ăn mỗi ngày"
+                id="mealsPerDay"
+                placeholder="Ví dụ: 3"
+                value={formData.step4.mealsPerDay}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Lượng nước uống mỗi ngày (lít)"
+                id="waterIntake"
+                placeholder="Ví dụ: 2"
+                value={formData.step4.waterIntake}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Hạn chế ăn uống (nếu có)"
+                id="dietaryRestrictions"
+                placeholder="Ví dụ: Không ăn gluten, chay"
+                value={formData.step4.dietaryRestrictions}
+                onChange={handleChange}
+              />
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Tiếp theo
+                </button>
+              </div>
+            </form>
+          </>
+        );
+      case 4:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Hoạt động thể chất
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Hãy cho chúng tôi biết về mức độ hoạt động thể chất của bạn.
+              </p>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              className="space-y-6 mt-8"
+            >
+              <InputField
+                label="Tần suất tập thể dục (lần/tuần)"
+                id="exerciseFrequency"
+                placeholder="Ví dụ: 3"
+                value={formData.step5.exerciseFrequency}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Loại bài tập thường xuyên"
+                id="exerciseType"
+                placeholder="Ví dụ: Chạy bộ, yoga, bơi lội"
+                value={formData.step5.exerciseType}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Mức độ hoạt động hàng ngày"
+                id="activityLevel"
+                placeholder="Ví dụ: Ít vận động, trung bình, rất năng động"
+                value={formData.step5.activityLevel}
+                onChange={handleChange}
+              />
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Tiếp theo
+                </button>
+              </div>
+            </form>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <div className="text-center lg:text-left mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Xem kết quả
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Cảm ơn bạn đã hoàn thành khảo sát. Dưới đây là thông tin bạn đã cung cấp.
+              </p>
+            </div>
+            
+            <div className="mt-8 space-y-6">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 className="text-lg font-semibold mb-4">Tóm tắt thông tin</h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium">Thông tin cá nhân</h3>
+                    <p>Tên: {formData.step1.name} {formData.step1.firstName} {formData.step1.lastName}</p>
+                    <p>Ngày sinh: {formData.step1.dob || "Chưa cung cấp"}</p>
+                    <p>Email: {formData.step1.email || "Chưa cung cấp"}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium">Thông tin sức khỏe</h3>
+                    <p>Chiều cao: {formData.step3.height || "Chưa cung cấp"} cm</p>
+                    <p>Cân nặng: {formData.step3.weight || "Chưa cung cấp"} kg</p>
+                    <p>Huyết áp: {formData.step3.bloodPressure || "Chưa cung cấp"}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium">Chế độ ăn uống</h3>
+                    <p>Số bữa ăn mỗi ngày: {formData.step4.mealsPerDay || "Chưa cung cấp"}</p>
+                    <p>Lượng nước uống: {formData.step4.waterIntake || "Chưa cung cấp"} lít</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium">Hoạt động thể chất</h3>
+                    <p>Tần suất tập thể dục: {formData.step5.exerciseFrequency || "Chưa cung cấp"} lần/tuần</p>
+                    <p>Loại bài tập: {formData.step5.exerciseType || "Chưa cung cấp"}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="button"
+                  onClick={() => alert("Khảo sát đã được gửi thành công!")}
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Hoàn thành
+                </button>
+              </div>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block w-1/3 bg-white p-8 border-r">
+        <div className="mb-12">
+          <img
+            src="/src/assets/images/logo.png"
+            alt="Doppelherz"
+            className="h-20"
+          />
+        </div>
+        <nav aria-label="Progress">
+          <ol role="list" className="space-y-6">
+            {steps.map((step, stepIdx) => (
+              <li key={`${step.id}-${step.name}`} className="relative flex items-start">
+                <div
+                  className={`absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 ${
+                    stepIdx !== steps.length - 1 ? "bg-gray-300" : ""
+                  }`}
+                  aria-hidden="true"
+                />
+                {step.status === "complete" ? (
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-600">
+                    <svg
+                      className="h-5 w-5 text-white"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                ) : step.status === "current" ? (
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-green-600 bg-white">
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-600" />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-gray-300 bg-white">
+                    <span className="h-2.5 w-2.5 rounded-full bg-transparent" />
+                  </div>
+                )}
+                <div className="ml-4">
+                  <p
+                    className={`text-sm font-medium ${
+                      step.status === "current"
+                        ? "text-green-600"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    Bước {step.id}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      step.status === "current"
+                        ? "text-green-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {step.name}
+                  </p>
+                  <p
+                    className={`text-xs ${
+                      step.status === "complete"
+                        ? "text-green-500"
+                        : step.status === "current"
+                        ? "text-green-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {step.status === "complete"
+                      ? "Hoàn thành"
+                      : step.status === "current"
+                      ? "Đang tiến hành"
+                      : ""}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
+        {/* Mobile Header */}
+        <div className="lg:hidden flex items-center justify-between mb-6">
+          <button
+            onClick={handleBack}
+            className={`p-2 rounded-md text-gray-600 hover:bg-gray-100 ${
+              currentStepIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={currentStepIndex === 0}
+          >
+            <ChevronLeftIcon className="h-6 w-6" />
+            <span className="sr-only">Quay lại</span>
+          </button>
+          <div className="text-sm font-medium text-gray-500">
+            Bước {currentStepIndex + 1}/{steps.length}
+          </div>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden lg:flex items-center justify-between mb-10">
+          {currentStepIndex > 0 && (
+            <button
+              onClick={handleBack}
+              className="flex items-center text-sm text-gray-600 hover:text-gray-900"
+            >
+              <ChevronLeftIcon className="h-5 w-5 mr-1" />
+              Quay lại
+            </button>
+          )}
+          {currentStepIndex === 0 && <div />}
+        </div>
+
+        {/* Green progress bar for mobile */}
+        <div className="lg:hidden my-4">
+          <div className="w-full bg-gray-200 rounded-full h-1">
+            <div
+              className="bg-green-500 h-1 rounded-full"
+              style={{
+                width: `${((currentStepIndex + 1) / steps.length) * 100}%`,
+              }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Render the current step form */}
+        <div className="max-w-lg mx-auto lg:mx-0">
+          {renderCurrentStepForm()}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default SurveyPage;

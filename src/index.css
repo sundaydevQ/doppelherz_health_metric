@@ -27,8 +27,8 @@ a {
 
 a:focus,
 a:focus-visible {
-  /* outline: none; */ /* Consider accessibility */
-  /* box-shadow: none; */ /* Consider accessibility */
+  outline: none; /* Consider accessibility */
+  box-shadow: none; /* Consider accessibility */
 }
 
 a:hover {

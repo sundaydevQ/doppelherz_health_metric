@@ -20,25 +20,22 @@ export interface SurveyFormData {
   };
   step2: {
     age: string;
-    question1: string;
-    question2: string;
-    question3: string;
   };
   step3: {
-    height: string;
-    weight: string;
-    bloodPressure: string;
-    chronicConditions: string;
+    physicalSigns?: string[]; // Added for checkbox group, optional array of strings
+    otherPhysicalSigns?: string; // Additional field for custom input when "other" is selected
   };
   step4: {
-    mealsPerDay: string;
-    waterIntake: string;
-    dietaryRestrictions: string;
+    psychologicalSigns?: string[]; // Added for psychological signs checkbox group
+    otherPsychologicalSigns?: string; // Additional field for custom input when "other" is selected
   };
   step5: {
-    exerciseFrequency: string;
-    exerciseType: string;
-    activityLevel: string;
+    riskFactors?: string[]; // Added for risk factors checkbox group
+    otherRiskFactors?: string; // Additional field for custom input when "other" is selected
   };
-  step6: Record<string, never>;
+  step6: {
+    medications?: string[]; // Added for medications checkbox group
+    otherMedications?: string; // Additional field for custom input when "other" is selected
+  };
+  step7: Record<string, never>;
 }

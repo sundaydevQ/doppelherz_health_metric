@@ -7,45 +7,45 @@ import { Button } from "../../../../shared";
 import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
 
-export interface PhysicalActivityFormProps {
+export interface MedicationFormProps {
   handleNext: () => void;
   handleBack: () => void;
 }
 
-const riskFactorsOptions = [
+const medicationOptions = [
   {
-    value: "earlyHysterectomyOrOophorectomy",
-    label: "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)",
-  },
-  { value: "menopause", label: "Mãn kinh (12 tháng không có kinh)" },
-  {
-    value: "nightShiftsOrChronicSleepDeprivation",
-    label: "Làm việc ca đêm, thiếu ngủ thường xuyên",
+    value: "combinedHormonalContraceptives",
+    label: "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)",
   },
   {
-    value: "chronicStress",
-    label: "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình",
+    value: "corticosteroids",
+    label: "Các thuốc corticoid (Prednisolone, Dexamethasone...)",
   },
   {
-    value: "extremeDietingOrRapidWeightLoss",
-    label: "Ăn kiêng cực đoan, sụt cân nhanh",
+    value: "cancerTreatmentMeds",
+    label: "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)",
   },
   {
-    value: "sedentaryLifestyle",
-    label: "Không vận động thể chất thường xuyên",
+    value: "antidepressantsAntipsychotics",
+    label: "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)",
   },
   {
-    value: "smokingOrRegularAlcoholConsumption",
-    label: "Hút thuốc lá hoặc uống rượu thường xuyên",
+    value: "thyroidMeds",
+    label: "Thuốc điều trị cường giáp hoặc suy giáp",
   },
   {
-    value: "Bình thường",
-    label: "Bình thường",
+    value: "fertilityMeds",
+    label: "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản",
   },
+  {
+    value: "anticonvulsants",
+    label: "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)",
+  },
+  { value: "Bình thường", label: "Bình thường" },
   { value: "other", label: "Khác" },
 ];
 
-const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
+const MedicationForm: React.FC<MedicationFormProps> = ({
   handleNext,
   handleBack,
 }) => {
@@ -53,23 +53,23 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
   const { validateForm, setTouched, values, setFieldValue } =
     useFormikContext<SurveyFormData>();
 
-  // Check if "other" is selected in risk factors
-  const isOtherRiskFactorSelected =
-    values.step5?.riskFactors?.includes("other");
+  // Check if "other" is selected in medications
+  const isOtherMedicationSelected =
+    values.step6?.medications?.includes("other");
 
-  // Custom change handler for risk factors
-  const handleRiskFactorsChange = (
+  // Custom change handler for medications
+  const handleMedicationsChange = (
     value: string,
     currentValues: string[]
   ): string[] => {
     if (value === "other") {
       if (currentValues.includes("other")) {
         // If "other" is already selected, deselect it
-        setFieldValue("step5.otherRiskFactors", ""); // Clear description
+        setFieldValue("step6.otherMedications", ""); // Clear description
         return currentValues.filter((item) => item !== "other");
       } else {
         // If "other" is being selected, clear all other values and set only "other"
-        setFieldValue("step5.otherRiskFactors", ""); // Clear description
+        setFieldValue("step6.otherMedications", ""); // Clear description
         return ["other"];
       }
     } else {
@@ -88,7 +88,7 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
       // or deselecting 'other' by clicking it again (handled above).
       // We need to ensure the description field is cleared if 'other' is no longer the sole selection or part of the selection.
       if (currentValues.includes("other")) {
-        setFieldValue("step5.otherRiskFactors", "");
+        setFieldValue("step6.otherMedications", "");
       }
       return newValues;
     }
@@ -97,34 +97,34 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
   const handleNextWithValidation = async () => {
     setIsValidating(true);
     try {
-      // Mark all fields for step 5 as touched to trigger validation
-      const step5Fields = {
-        step5: {
-          riskFactors: true,
-          otherRiskFactors: true,
+      // Mark all fields for step 6 as touched to trigger validation
+      const step6Fields = {
+        step6: {
+          medications: true,
+          otherMedications: true,
         },
       };
 
       // First set touched without validation
-      await setTouched(step5Fields, false);
+      await setTouched(step6Fields, false);
 
       // Then validate explicitly
       const validationErrors = await validateForm();
-      console.log("Validation errors for Step 5:", validationErrors);
+      console.log("Validation errors for Step 6:", validationErrors);
 
-      // Check if there are any errors in step5
-      const hasStep5Errors = validationErrors.step5;
+      // Check if there are any errors in step6
+      const hasStep6Errors = validationErrors.step6;
 
-      if (!hasStep5Errors) {
+      if (!hasStep6Errors) {
         // If no errors, proceed to the next step
         handleNext();
       } else {
         console.log(
-          "Validation failed for Step 5. Please check the form for errors."
+          "Validation failed for Step 6. Please check the form for errors."
         );
       }
     } catch (error) {
-      console.error("Form validation error on Step 5:", error);
+      console.error("Form validation error on Step 6:", error);
     } finally {
       setIsValidating(false);
     }
@@ -134,25 +134,26 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
     <>
       <div className="text-center lg:text-left mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Yếu tố tiền sử và nguy cơ khác
+          Các loại thuốc bạn đã hoặc đang sử dụng
         </h1>
         <p className="mt-1 text-sm text-gray-600">
-          Vui lòng cung cấp thông tin về các yếu tố tiền sử và nguy cơ khác
+          Vui lòng cung cấp thông tin về các loại thuốc bạn đã hoặc đang sử dụng
         </p>
-      </div>{" "}
+      </div>
+
       <div className="space-y-6 mt-8">
         <FormikCheckboxGroupField
-          label="Các yếu tố tiền sử và nguy cơ khác nếu có?"
-          name="step5.riskFactors"
-          options={riskFactorsOptions}
-          onCustomChange={handleRiskFactorsChange}
+          label="Các loại thuốc bạn đã hoặc đang sử dụng?"
+          name="step6.medications"
+          options={medicationOptions}
+          onCustomChange={handleMedicationsChange}
         />
 
-        {isOtherRiskFactorSelected && (
+        {isOtherMedicationSelected && (
           <FormikInputField
-            label="Vui lòng mô tả cụ thể yếu tố nguy cơ khác"
-            name="step5.otherRiskFactors"
-            placeholder="Nhập yếu tố nguy cơ khác..."
+            label="Vui lòng mô tả cụ thể loại thuốc khác"
+            name="step6.otherMedications"
+            placeholder="Nhập loại thuốc khác..."
             required
           />
         )}
@@ -175,4 +176,4 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
   );
 };
 
-export default PhysicalActivityForm;
+export default MedicationForm;

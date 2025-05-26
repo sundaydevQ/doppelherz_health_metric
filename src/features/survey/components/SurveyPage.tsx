@@ -8,17 +8,19 @@ import SurveyQuestionsForm from "./steps/SurveyQuestionsForm";
 import HealthInfoForm from "./steps/HealthInfoForm";
 import DietAssessmentForm from "./steps/DietAssessmentForm";
 import PhysicalActivityForm from "./steps/PhysicalActivityForm";
+import MedicationForm from "./steps/MedicationForm";
 import SurveyResults from "./steps/SurveyResults";
 import { getValidationSchemaByStep } from "./validationSchema";
 
 // Initial steps data
 const initialSteps: Step[] = [
   { id: "01", name: "Thông tin cơ bản", status: "current" },
-  { id: "02", name: "Thực hiện khảo sát", status: "upcoming" },
+  { id: "02", name: "Thông tin về độ tuổi", status: "upcoming" },
   { id: "03", name: "Thông tin sức khỏe", status: "upcoming" },
-  { id: "04", name: "Đánh giá chế độ ăn", status: "upcoming" },
+  { id: "04", name: "Đánh giá tâm lý", status: "upcoming" },
   { id: "05", name: "Hoạt động thể chất", status: "upcoming" },
-  { id: "06", name: "Xem kết quả", status: "upcoming" },
+  { id: "06", name: "Thông tin thuốc", status: "upcoming" },
+  { id: "07", name: "Xem kết quả", status: "upcoming" },
 ];
 
 // Initial form values that match the SurveyFormData structure
@@ -35,31 +37,26 @@ const initialFormValues: SurveyFormData = {
   // Step 2: Survey
   step2: {
     age: "",
-    question1: "",
-    question2: "",
-    question3: "",
-  },
-  // Step 3: Health information
+  }, // Step 3: Health information
   step3: {
-    height: "",
-    weight: "",
-    bloodPressure: "",
-    chronicConditions: "",
-  },
-  // Step 4: Diet assessment
+    physicalSigns: [],
+    otherPhysicalSigns: "",
+  }, // Step 4: Diet assessment
   step4: {
-    mealsPerDay: "",
-    waterIntake: "",
-    dietaryRestrictions: "",
-  },
-  // Step 5: Physical activity
+    psychologicalSigns: [],
+    otherPsychologicalSigns: "",
+  }, // Step 5: Physical activity
   step5: {
-    exerciseFrequency: "",
-    exerciseType: "",
-    activityLevel: "",
+    riskFactors: [],
+    otherRiskFactors: "",
   },
-  // Step 6: Review (no form inputs)
-  step6: {},
+  // Step 6: Medications
+  step6: {
+    medications: [],
+    otherMedications: "",
+  },
+  // Step 7: Review (no form inputs)
+  step7: {},
 };
 
 const SurveyPage: React.FC = () => {
@@ -133,13 +130,8 @@ const SurveyPage: React.FC = () => {
     // Show success message or redirect user
     alert("Cảm ơn bạn đã hoàn thành khảo sát!");
     actions.setSubmitting(false);
-  };
-  // Render form based on current step
-  const renderCurrentStepForm = (
-    formikProps: FormikHelpers<SurveyFormData> & { values: SurveyFormData }
-  ) => {
-    const { values } = formikProps;
-
+  }; // Render form based on current step
+  const renderCurrentStepForm = () => {
     switch (currentStepIndex) {
       case 0:
         return <BasicInfoForm handleNext={handleNext} />;
@@ -166,7 +158,11 @@ const SurveyPage: React.FC = () => {
           />
         );
       case 5:
-        return <SurveyResults formData={values} handleBack={handleBack} />;
+        return (
+          <MedicationForm handleNext={handleNext} handleBack={handleBack} />
+        );
+      case 6:
+        return <SurveyResults handleBack={handleBack} />;
       default:
         return null;
     }
@@ -180,7 +176,7 @@ const SurveyPage: React.FC = () => {
       validateOnBlur={true}
       validateOnMount={false}
     >
-      {(formikProps) => (
+      {() => (
         <Form>
           <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
             <StepProgress
@@ -194,7 +190,7 @@ const SurveyPage: React.FC = () => {
             <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
               {/* Render the current step form */}
               <div className="max-w-lg mx-auto lg:mx-0">
-                {renderCurrentStepForm(formikProps)}
+                {renderCurrentStepForm()}
               </div>
             </main>
           </div>

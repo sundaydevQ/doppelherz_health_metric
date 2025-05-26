@@ -17,6 +17,7 @@ export interface FormikCheckboxGroupFieldProps {
   horizontal?: boolean;
   required?: boolean;
   description?: string;
+  onCustomChange?: (value: string, currentValues: string[]) => string[];
 }
 
 const FormikCheckboxGroupField: React.FC<FormikCheckboxGroupFieldProps> = ({
@@ -27,6 +28,7 @@ const FormikCheckboxGroupField: React.FC<FormikCheckboxGroupFieldProps> = ({
   horizontal = false,
   required = false,
   description,
+  onCustomChange,
 }) => {
   // Use Formik's useField hook to connect with Formik
   const [field, meta, helpers] = useField(name);
@@ -35,14 +37,20 @@ const FormikCheckboxGroupField: React.FC<FormikCheckboxGroupFieldProps> = ({
 
   // Ensure the field value is an array
   const values = Array.isArray(field.value) ? field.value : [];
-
   const handleChange = (value: string) => {
-    if (values.includes(value)) {
-      // Remove the value if it's already selected
-      setValue(values.filter((item: string) => item !== value));
+    if (onCustomChange) {
+      // Use custom change handler if provided
+      const newValues = onCustomChange(value, values);
+      setValue(newValues);
     } else {
-      // Add the value if it's not already selected
-      setValue([...values, value]);
+      // Default behavior
+      if (values.includes(value)) {
+        // Remove the value if it's already selected
+        setValue(values.filter((item: string) => item !== value));
+      } else {
+        // Add the value if it's not already selected
+        setValue([...values, value]);
+      }
     }
   };
 

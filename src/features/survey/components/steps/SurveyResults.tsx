@@ -3,15 +3,12 @@ import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
 
 export interface SurveyResultsProps {
-  formData: SurveyFormData;
   handleBack: () => void;
 }
 
-const SurveyResults: React.FC<SurveyResultsProps> = ({
-  formData,
-  handleBack,
-}) => {
-  const { submitForm, isSubmitting } = useFormikContext<SurveyFormData>();
+const SurveyResults: React.FC<SurveyResultsProps> = ({ handleBack }) => {
+  const { submitForm, isSubmitting, values } =
+    useFormikContext<SurveyFormData>();
 
   return (
     <>
@@ -33,68 +30,65 @@ const SurveyResults: React.FC<SurveyResultsProps> = ({
             {" "}
             <div>
               <h3 className="font-medium">Thông tin cá nhân</h3>
-              <p>Họ và tên: {formData.step1.fullName || "Chưa cung cấp"}</p>
+              <p>Họ và tên: {values.step1.fullName || "Chưa cung cấp"}</p>
               <p>
                 Giới tính:{" "}
-                {formData.step1.gender === "male"
+                {values.step1.gender === "male"
                   ? "Nam"
-                  : formData.step1.gender === "female"
+                  : values.step1.gender === "female"
                   ? "Nữ"
-                  : formData.step1.gender === "other"
+                  : values.step1.gender === "other"
                   ? "Khác"
                   : "Chưa cung cấp"}
               </p>
-              <p>Nghề nghiệp: {formData.step1.occupation || "Chưa cung cấp"}</p>
+              <p>Nghề nghiệp: {values.step1.occupation || "Chưa cung cấp"}</p>
               <p>
-                Số điện thoại: {formData.step1.phoneNumber || "Chưa cung cấp"}
+                Số điện thoại: {values.step1.phoneNumber || "Chưa cung cấp"}
               </p>
-              <p>Email: {formData.step1.email || "Chưa cung cấp"}</p>{" "}
-              <p>Địa chỉ: {formData.step1.address || "Chưa cung cấp"}</p>
+              <p>Email: {values.step1.email || "Chưa cung cấp"}</p>{" "}
+              <p>Địa chỉ: {values.step1.address || "Chưa cung cấp"}</p>
             </div>
             <div>
               <h3 className="font-medium">Thông tin khảo sát</h3>{" "}
               <p>
                 Độ tuổi:{" "}
-                {formData.step2.age
-                  ? formData.step2.age === "under30"
+                {values.step2.age
+                  ? values.step2.age === "under30"
                     ? "Dưới 30 tuổi"
-                    : formData.step2.age === "30-34"
+                    : values.step2.age === "30-34"
                     ? "30 - 34 tuổi"
-                    : formData.step2.age === "35-39"
+                    : values.step2.age === "35-39"
                     ? "35 - 39 tuổi"
-                    : formData.step2.age === "40-44"
+                    : values.step2.age === "40-44"
                     ? "40 - 44 tuổi"
-                    : formData.step2.age === "45-49"
+                    : values.step2.age === "45-49"
                     ? "45 - 49 tuổi"
-                    : formData.step2.age === "50-54"
+                    : values.step2.age === "50-54"
                     ? "50 - 54 tuổi"
-                    : formData.step2.age === "55plus"
+                    : values.step2.age === "55plus"
                     ? "Từ 55 tuổi trở lên"
                     : "Chưa cung cấp"
                   : "Chưa cung cấp"}
               </p>
-              <p>
-                Giờ ngủ mỗi ngày: {formData.step2.question1 || "Chưa cung cấp"}
-              </p>
-              <p>Tập thể dục: {formData.step2.question2 || "Chưa cung cấp"}</p>
-              <p>
-                Lượng nước uống: {formData.step2.question3 || "Chưa cung cấp"}
-              </p>
             </div>
             <div>
               <h3 className="font-medium">Thông tin sức khỏe</h3>
-              <p>Chiều cao: {formData.step3.height || "Chưa cung cấp"} cm</p>
-              <p>Cân nặng: {formData.step3.weight || "Chưa cung cấp"} kg</p>
-              <p>Huyết áp: {formData.step3.bloodPressure || "Chưa cung cấp"}</p>
+              <p>
+                Dấu hiệu thể chất:{" "}
+                {values.step3.physicalSigns &&
+                values.step3.physicalSigns.length > 0
+                  ? values.step3.physicalSigns.join(", ")
+                  : "Chưa cung cấp"}
+              </p>
             </div>
             <div>
               <h3 className="font-medium">Chế độ ăn uống</h3>
               <p>
                 Số bữa ăn mỗi ngày:{" "}
-                {formData.step4.mealsPerDay || "Chưa cung cấp"}
+                {values.step4.mealsPerDay || "Chưa cung cấp"}
               </p>
               <p>
-                Lượng nước uống: {formData.step4.waterIntake || "Chưa cung cấp"}{" "}
+                Lượng nước uống: {values.step4.waterIntake || "Chưa cung cấp"}{" "}
                 lít
               </p>
             </div>
@@ -102,10 +96,10 @@ const SurveyResults: React.FC<SurveyResultsProps> = ({
               <h3 className="font-medium">Hoạt động thể chất</h3>
               <p>
                 Tần suất tập thể dục:{" "}
-                {formData.step5.exerciseFrequency || "Chưa cung cấp"} lần/tuần
+                {values.step5.exerciseFrequency || "Chưa cung cấp"} lần/tuần
               </p>
               <p>
-                Loại bài tập: {formData.step5.exerciseType || "Chưa cung cấp"}
+                Loại bài tập: {values.step5.exerciseType || "Chưa cung cấp"}
               </p>
             </div>
           </div>

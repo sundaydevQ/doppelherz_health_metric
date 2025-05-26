@@ -144,6 +144,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between my-6">
         <button
+          type="button"
           onClick={handleBack}
           className={`p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors ${
             currentStepIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -154,6 +155,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
           <span className="sr-only">Quay lại</span>
         </button>
         <button
+          type="button"
           onClick={() => setShowStepsModal(true)}
           className="text-sm font-medium text-gray-700 flex items-center gap-2 bg-gray-50 rounded-full px-4 py-1.5 hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 mr-4"
           aria-label="View progress steps"
@@ -185,6 +187,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
                 Tiến trình Đánh giá Sức khỏe
               </div>
               <button
+                type="button"
                 onClick={() => setShowStepsModal(false)}
                 className="text-gray-400 hover:text-gray-500 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Close"
@@ -310,6 +313,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
               {/* Add a button to return to the current step */}
               <div className="mt-8 flex justify-end">
                 <button
+                  type="button"
                   onClick={() => setShowStepsModal(false)}
                   className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
                 >

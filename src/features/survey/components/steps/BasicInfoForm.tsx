@@ -31,6 +31,8 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
         },
       };
 
+      return handleNext();
+
       // First set touched without validation
       await setTouched(step1Fields, false);
 

@@ -23,45 +23,66 @@ export const surveyQuestionsSchema = Yup.object({
         ["under30", "30-34", "35-39", "40-44", "45-49", "50-54", "55plus"],
         "Vui lòng chọn một độ tuổi hợp lệ từ danh sách"
       ),
-    question1: Yup.string().required(
-      "Vui lòng cho biết bạn ngủ bao nhiêu giờ mỗi ngày"
-    ),
-    question2: Yup.string().required(
-      "Vui lòng cho biết tần suất tập thể dục của bạn"
-    ),
-    question3: Yup.string().required(
-      "Vui lòng cho biết bạn uống bao nhiêu nước mỗi ngày"
-    ),
   }),
 });
 
 // Step 3: Health Information validation schema
 export const healthInfoSchema = Yup.object({
   step3: Yup.object({
-    height: Yup.string().required("Chiều cao là bắt buộc"),
-    weight: Yup.string().required("Cân nặng là bắt buộc"),
-    bloodPressure: Yup.string().required("Huyết áp là bắt buộc"),
-    chronicConditions: Yup.string(), // Optional field
+    physicalSigns: Yup.array()
+      .min(1, "Vui lòng chọn ít nhất một dấu hiệu sức khỏe")
+      .of(Yup.string()), // Validate as an array of strings
+    otherPhysicalSigns: Yup.string().when("physicalSigns", {
+      is: (physicalSigns: string[]) =>
+        physicalSigns && physicalSigns.includes("other"),
+      then: (schema) => schema.required("Vui lòng mô tả dấu hiệu khác"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
 });
 
 // Step 4: Diet Assessment validation schema
 export const dietAssessmentSchema = Yup.object({
   step4: Yup.object({
-    mealsPerDay: Yup.string().required("Số bữa ăn là bắt buộc"),
-    waterIntake: Yup.string().required("Lượng nước là bắt buộc"),
-    dietaryRestrictions: Yup.string(), // Optional field
+    psychologicalSigns: Yup.array()
+      .min(1, "Vui lòng chọn ít nhất một dấu hiệu tâm lý")
+      .of(Yup.string()), // Optional array for psychological signs
+    otherPsychologicalSigns: Yup.string().when("psychologicalSigns", {
+      is: (psychologicalSigns: string[]) =>
+        psychologicalSigns && psychologicalSigns.includes("other"),
+      then: (schema) => schema.required("Vui lòng mô tả dấu hiệu tâm lý khác"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
 });
 
 // Step 5: Physical Activity validation schema
 export const physicalActivitySchema = Yup.object({
   step5: Yup.object({
-    exerciseFrequency: Yup.string().required(
-      "Tần suất tập thể dục là bắt buộc"
-    ),
-    exerciseType: Yup.string().required("Loại bài tập là bắt buộc"),
-    activityLevel: Yup.string().required("Mức độ hoạt động là bắt buộc"),
+    riskFactors: Yup.array()
+      .min(1, "Vui lòng chọn ít nhất một yếu tố nguy cơ")
+      .of(Yup.string()), // Optional array for risk factors
+    otherRiskFactors: Yup.string().when("riskFactors", {
+      is: (riskFactors: string[]) =>
+        riskFactors && riskFactors.includes("other"),
+      then: (schema) => schema.required("Vui lòng mô tả yếu tố nguy cơ khác"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  }),
+});
+
+// Step 6: Medication validation schema
+export const medicationSchema = Yup.object({
+  step6: Yup.object({
+    medications: Yup.array()
+      .min(1, "Vui lòng chọn ít nhất một loại thuốc")
+      .of(Yup.string()), // Optional array for medications
+    otherMedications: Yup.string().when("medications", {
+      is: (medications: string[]) =>
+        medications && medications.includes("other"),
+      then: (schema) => schema.required("Vui lòng mô tả loại thuốc khác"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
 });
 
@@ -72,7 +93,8 @@ export const combinedSchema = Yup.object({
   ...healthInfoSchema.fields,
   ...dietAssessmentSchema.fields,
   ...physicalActivitySchema.fields,
-  step6: Yup.object().default({}),
+  ...medicationSchema.fields,
+  step7: Yup.object().default({}),
 });
 
 // Get validation schema by step index
@@ -88,7 +110,9 @@ export const getValidationSchemaByStep = (stepIndex: number) => {
       return dietAssessmentSchema;
     case 4:
       return physicalActivitySchema;
-    case 5: // Results page, no validation needed
+    case 5:
+      return medicationSchema;
+    case 6: // Results page, no validation needed
       return Yup.object();
     default:
       return Yup.object(); // Default empty schema

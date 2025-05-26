@@ -1,25 +1,21 @@
 import React from "react";
-import InputField from "../InputField";
+import { FormikInputField } from "../../../../shared/components";
 import { Button } from "../../../../shared";
+import { useFormikContext } from "formik";
+import type { SurveyFormData } from "../types";
 
 export interface HealthInfoFormProps {
-  formData: {
-    height: string;
-    weight: string;
-    bloodPressure: string;
-    chronicConditions: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
   handleBack: () => void;
 }
 
 const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
-  formData,
-  handleChange,
   handleNext,
   handleBack,
 }) => {
+  // No need to directly use context since FormikInputField handles it
+  useFormikContext<SurveyFormData>();
+
   return (
     <>
       <div className="text-center lg:text-left mb-2">
@@ -31,51 +27,40 @@ const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
         </p>
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleNext();
-        }}
-        className="space-y-6 mt-8"
-      >
-        <InputField
+      <div className="space-y-6 mt-8">
+        <FormikInputField
           label="Chiều cao (cm)"
-          id="height"
+          name="step3.height"
           placeholder="Ví dụ: 170"
-          value={formData.height}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Cân nặng (kg)"
-          id="weight"
+          name="step3.weight"
           placeholder="Ví dụ: 65"
-          value={formData.weight}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Huyết áp"
-          id="bloodPressure"
+          name="step3.bloodPressure"
           placeholder="Ví dụ: 120/80"
-          value={formData.bloodPressure}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Bệnh mãn tính (nếu có)"
-          id="chronicConditions"
+          name="step3.chronicConditions"
           placeholder="Ví dụ: Tiểu đường, cao huyết áp"
-          value={formData.chronicConditions}
-          onChange={handleChange}
         />
 
         <div className="flex justify-between">
           <Button type="button" onPress={handleBack} variant="bordered">
             Quay lại
           </Button>
-          <Button type="submit" className="">
+          <Button type="button" onPress={handleNext} className="">
             Tiếp theo
           </Button>
         </div>
-      </form>
+      </div>
     </>
   );
 };

@@ -1,24 +1,21 @@
 import React from "react";
-import InputField from "../InputField";
+import { FormikInputField } from "../../../../shared/components";
 import { Button } from "../../../../shared";
+import { useFormikContext } from "formik";
+import type { SurveyFormData } from "../types";
 
 export interface DietAssessmentFormProps {
-  formData: {
-    mealsPerDay: string;
-    waterIntake: string;
-    dietaryRestrictions: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
   handleBack: () => void;
 }
 
 const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
-  formData,
-  handleChange,
   handleNext,
   handleBack,
 }) => {
+  // No need to directly use context since FormikInputField handles it
+  useFormikContext<SurveyFormData>();
+
   return (
     <>
       <div className="text-center lg:text-left mb-2">
@@ -37,26 +34,22 @@ const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
         }}
         className="space-y-6 mt-8"
       >
-        <InputField
+        <FormikInputField
           label="Số bữa ăn mỗi ngày"
-          id="mealsPerDay"
+          name="step4.mealsPerDay"
           placeholder="Ví dụ: 3"
-          value={formData.mealsPerDay}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Lượng nước uống mỗi ngày (lít)"
-          id="waterIntake"
+          name="step4.waterIntake"
           placeholder="Ví dụ: 2"
-          value={formData.waterIntake}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Hạn chế ăn uống (nếu có)"
-          id="dietaryRestrictions"
+          name="step4.dietaryRestrictions"
           placeholder="Ví dụ: Không ăn gluten, chay"
-          value={formData.dietaryRestrictions}
-          onChange={handleChange}
         />
 
         <div className="flex justify-between">

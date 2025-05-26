@@ -1,25 +1,65 @@
-import React from "react";
-import InputField from "../InputField";
-import { Button } from "../../../../shared";
+import React, { useState } from "react";
+import {
+  Button,
+  FormikInputField,
+  FormikRadioGroupField,
+} from "../../../../shared/components";
+import { useFormikContext } from "formik";
+import type { SurveyFormData } from "../types";
 
 export interface BasicInfoFormProps {
-  formData: {
-    name: string;
-    firstName: string;
-    lastName: string;
-    dob: string;
-    email: string;
-    income: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
 }
 
-const BasicInfoForm: React.FC<BasicInfoFormProps> = ({
-  formData,
-  handleChange,
-  handleNext,
-}) => {
+const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
+  const [isValidating, setIsValidating] = useState(false);
+  // Get validation and submission functions from Formik context
+  const { validateForm, setTouched } = useFormikContext<SurveyFormData>(); // Handler for the next button that validates the form before proceeding
+  const handleNextWithValidation = async () => {
+    setIsValidating(true);
+
+    try {
+      // Mark all fields as touched to trigger validation
+      const step1Fields = {
+        step1: {
+          fullName: true,
+          gender: true,
+          occupation: true,
+          phoneNumber: true,
+          email: true,
+          address: true,
+        },
+      };
+
+      // First set touched without validation
+      await setTouched(step1Fields, false);
+
+      // Then validate explicitly
+      const validationErrors = await validateForm();
+      console.log("Validation errors:", validationErrors);
+
+      // Check if there are any errors in step1
+      const hasStep1Errors = validationErrors.step1;
+
+      if (!hasStep1Errors) {
+        // If no errors, proceed to the next step
+        handleNext();
+      } else {
+        console.log("Validation failed. Please check the form for errors.");
+      }
+    } catch (error) {
+      console.error("Form validation error:", error);
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const genderOptions = [
+    { value: "male", label: "Nam" },
+    { value: "female", label: "Nữ" },
+    { value: "other", label: "Khác" },
+  ];
+
   return (
     <>
       <div className="text-center lg:text-left mb-2">
@@ -27,67 +67,57 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({
           Thông tin cơ bản
         </h1>
         <p className="mt-1 text-sm text-gray-600">
-          Chúng tôi cần xác thực thông tin của bạn, vì vậy chúng tôi cần một số
-          dữ liệu cá nhân.
+          Vui lòng hoàn thành các thông tin sau để bắt đầu khảo sát của bạn.
         </p>
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleNext();
-        }}
-        className="space-y-6 mt-8"
-      >
-        <InputField
-          label="Tên"
-          id="name"
-          placeholder="Andrés Alberto"
-          value={formData.name}
-          onChange={handleChange}
+      <div className="space-y-6 mt-8">
+        <FormikInputField
+          label="Họ và tên"
+          name="step1.fullName"
+          placeholder="Nguyễn Văn A"
+          required
         />
-        <InputField
-          label="Họ"
-          id="firstName"
-          placeholder="Avalos"
-          value={formData.firstName}
-          onChange={handleChange}
+        <FormikRadioGroupField
+          label="Giới tính"
+          name="step1.gender"
+          options={genderOptions}
+          required
+          horizontal
         />
-        <InputField
-          label="Tên đệm"
-          id="lastName"
-          placeholder="Aguilar"
-          value={formData.lastName}
-          onChange={handleChange}
+        <FormikInputField
+          label="Nghề nghiệp"
+          name="step1.occupation"
+          placeholder="Kỹ sư, Bác sĩ, Giáo viên, ..."
+          required
         />
-        <InputField
-          label="Ngày sinh"
-          id="dob"
-          placeholder="DD / MM / YYYY"
-          value={formData.dob}
-          onChange={handleChange}
-          hasIcon={true}
+        <FormikInputField
+          label="Số điện thoại"
+          name="step1.phoneNumber"
+          placeholder="0912345678"
+          required
         />
-        <InputField
+        <FormikInputField
           label="Email"
-          id="email"
+          name="step1.email"
           type="email"
-          placeholder="E.g. sample@email.com"
-          value={formData.email}
-          onChange={handleChange}
+          placeholder="example@email.com"
+        />{" "}
+        <FormikInputField
+          label="Địa chỉ"
+          name="step1.address"
+          placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
+          required
         />
-        <InputField
-          label="Thu nhập hàng tháng"
-          id="income"
-          placeholder="E.g. 15,000,000 VND"
-          value={formData.income}
-          onChange={handleChange}
-        />
-
-        <Button type="submit" className="w-full">
-          Tiếp theo
+        <Button
+          type="button"
+          onPress={handleNextWithValidation}
+          className="w-full"
+          disabled={isValidating}
+        >
+          {isValidating ? "Đang xác thực..." : "Tiếp theo"}
         </Button>
-      </form>
+      </div>
     </>
   );
 };

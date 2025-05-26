@@ -11,14 +11,15 @@ export interface Step {
 // Form data types for TypeScript
 export interface SurveyFormData {
   step1: {
-    name: string;
-    firstName: string;
-    lastName: string;
-    dob: string;
+    fullName: string;
+    gender: string;
+    occupation: string;
+    phoneNumber: string;
     email: string;
-    income: string;
+    address: string;
   };
   step2: {
+    age: string;
     question1: string;
     question2: string;
     question3: string;

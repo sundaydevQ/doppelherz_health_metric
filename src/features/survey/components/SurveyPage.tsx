@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import type { Step, SurveyFormData } from "./types";
+import type { FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
 import StepProgress from "./StepProgress";
 import BasicInfoForm from "./steps/BasicInfoForm";
 import SurveyQuestionsForm from "./steps/SurveyQuestionsForm";
@@ -7,6 +9,7 @@ import HealthInfoForm from "./steps/HealthInfoForm";
 import DietAssessmentForm from "./steps/DietAssessmentForm";
 import PhysicalActivityForm from "./steps/PhysicalActivityForm";
 import SurveyResults from "./steps/SurveyResults";
+import { getValidationSchemaByStep } from "./validationSchema";
 
 // Initial steps data
 const initialSteps: Step[] = [
@@ -18,6 +21,47 @@ const initialSteps: Step[] = [
   { id: "06", name: "Xem kết quả", status: "upcoming" },
 ];
 
+// Initial form values that match the SurveyFormData structure
+const initialFormValues: SurveyFormData = {
+  // Step 1: Basic information
+  step1: {
+    fullName: "",
+    gender: "",
+    occupation: "",
+    phoneNumber: "",
+    email: "",
+    address: "",
+  },
+  // Step 2: Survey
+  step2: {
+    age: "",
+    question1: "",
+    question2: "",
+    question3: "",
+  },
+  // Step 3: Health information
+  step3: {
+    height: "",
+    weight: "",
+    bloodPressure: "",
+    chronicConditions: "",
+  },
+  // Step 4: Diet assessment
+  step4: {
+    mealsPerDay: "",
+    waterIntake: "",
+    dietaryRestrictions: "",
+  },
+  // Step 5: Physical activity
+  step5: {
+    exerciseFrequency: "",
+    exerciseType: "",
+    activityLevel: "",
+  },
+  // Step 6: Review (no form inputs)
+  step6: {},
+};
+
 const SurveyPage: React.FC = () => {
   // State for steps
   const [steps, setSteps] = useState<Step[]>(initialSteps);
@@ -25,63 +69,10 @@ const SurveyPage: React.FC = () => {
   // Track the current step index (0-based)
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
-  // Different form data for each step
-  const [formData, setFormData] = useState<SurveyFormData>({
-    // Step 1: Basic information
-    step1: {
-      name: "Andrés Alberto",
-      firstName: "Avalos",
-      lastName: "Aguilar",
-      dob: "",
-      email: "",
-      income: "",
-    },
-    // Step 2: Survey
-    step2: {
-      question1: "",
-      question2: "",
-      question3: "",
-    },
-    // Step 3: Health information
-    step3: {
-      height: "",
-      weight: "",
-      bloodPressure: "",
-      chronicConditions: "",
-    },
-    // Step 4: Diet assessment
-    step4: {
-      mealsPerDay: "",
-      waterIntake: "",
-      dietaryRestrictions: "",
-    },
-    // Step 5: Physical activity
-    step5: {
-      exerciseFrequency: "",
-      exerciseType: "",
-      activityLevel: "",
-    },
-    // Step 6: Review (no form inputs)
-    step6: {},
-  });
-  // Helper function to handle input changes for the current step
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const currentStepKey = `step${
-      currentStepIndex + 1
-    }` as keyof SurveyFormData;
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [currentStepKey]: {
-        ...prevFormData[currentStepKey],
-        [name]: value,
-      },
-    }));
-  };
-
-  // Handle next step
+  // Get the validation schema for the current step
+  const currentValidationSchema = getValidationSchemaByStep(currentStepIndex); // Handle next step
   const handleNext = () => {
+    // Only proceed if we're not at the last step
     if (currentStepIndex < steps.length - 1) {
       // Update step statuses
       const updatedSteps = [...steps];
@@ -92,6 +83,7 @@ const SurveyPage: React.FC = () => {
       setCurrentStepIndex(currentStepIndex + 1);
     }
   };
+
   // Handle back step
   const handleBack = () => {
     if (currentStepIndex > 0) {
@@ -129,89 +121,86 @@ const SurveyPage: React.FC = () => {
       setCurrentStepIndex(stepIndex);
     }
   };
-
-  // Handle completion of the survey
-  const handleComplete = () => {
-    alert("Khảo sát đã được gửi thành công!");
+  // Handle form submission
+  const handleSubmit = (
+    values: SurveyFormData,
+    actions: FormikHelpers<SurveyFormData>
+  ) => {
+    console.log("Form submitted with values:", values);
     // Here you would typically submit the data to your backend
-  };
+    // For example: api.submitSurvey(values);
 
+    // Show success message or redirect user
+    alert("Cảm ơn bạn đã hoàn thành khảo sát!");
+    actions.setSubmitting(false);
+  };
   // Render form based on current step
-  const renderCurrentStepForm = () => {
+  const renderCurrentStepForm = (
+    formikProps: FormikHelpers<SurveyFormData> & { values: SurveyFormData }
+  ) => {
+    const { values } = formikProps;
+
     switch (currentStepIndex) {
       case 0:
-        return (
-          <BasicInfoForm
-            formData={formData.step1}
-            handleChange={handleChange}
-            handleNext={handleNext}
-          />
-        );
+        return <BasicInfoForm handleNext={handleNext} />;
       case 1:
         return (
           <SurveyQuestionsForm
-            formData={formData.step2}
-            handleChange={handleChange}
             handleNext={handleNext}
             handleBack={handleBack}
           />
         );
       case 2:
         return (
-          <HealthInfoForm
-            formData={formData.step3}
-            handleChange={handleChange}
-            handleNext={handleNext}
-            handleBack={handleBack}
-          />
+          <HealthInfoForm handleNext={handleNext} handleBack={handleBack} />
         );
       case 3:
         return (
-          <DietAssessmentForm
-            formData={formData.step4}
-            handleChange={handleChange}
-            handleNext={handleNext}
-            handleBack={handleBack}
-          />
+          <DietAssessmentForm handleNext={handleNext} handleBack={handleBack} />
         );
       case 4:
         return (
           <PhysicalActivityForm
-            formData={formData.step5}
-            handleChange={handleChange}
             handleNext={handleNext}
             handleBack={handleBack}
           />
         );
       case 5:
-        return (
-          <SurveyResults
-            formData={formData}
-            handleBack={handleBack}
-            handleComplete={handleComplete}
-          />
-        );
+        return <SurveyResults formData={values} handleBack={handleBack} />;
       default:
         return null;
     }
   };
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-      <StepProgress
-        steps={steps}
-        currentStepIndex={currentStepIndex}
-        handleBack={handleBack}
-        goToStep={goToStep}
-      />
+    <Formik
+      initialValues={initialFormValues}
+      validationSchema={currentValidationSchema}
+      onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={true}
+      validateOnMount={false}
+    >
+      {(formikProps) => (
+        <Form>
+          <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
+            <StepProgress
+              steps={steps}
+              currentStepIndex={currentStepIndex}
+              handleBack={handleBack}
+              goToStep={goToStep}
+            />
 
-      {/* Main Content Area */}
-      <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
-        {/* Render the current step form */}
-        <div className="max-w-lg mx-auto lg:mx-0">
-          {renderCurrentStepForm()}
-        </div>
-      </main>
-    </div>
+            {/* Main Content Area */}
+            <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
+              {/* Render the current step form */}
+              <div className="max-w-lg mx-auto lg:mx-0">
+                {renderCurrentStepForm(formikProps)}
+              </div>
+            </main>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

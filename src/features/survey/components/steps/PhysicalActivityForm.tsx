@@ -1,24 +1,21 @@
 import React from "react";
-import InputField from "../InputField";
+import { FormikInputField } from "../../../../shared/components";
 import { Button } from "../../../../shared";
+import { useFormikContext } from "formik";
+import type { SurveyFormData } from "../types";
 
 export interface PhysicalActivityFormProps {
-  formData: {
-    exerciseFrequency: string;
-    exerciseType: string;
-    activityLevel: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
   handleBack: () => void;
 }
 
 const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
-  formData,
-  handleChange,
   handleNext,
   handleBack,
 }) => {
+  // No need to directly use context since FormikInputField handles it
+  useFormikContext<SurveyFormData>();
+
   return (
     <>
       <div className="text-center lg:text-left mb-2">
@@ -37,26 +34,23 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
         }}
         className="space-y-6 mt-8"
       >
-        <InputField
+        <FormikInputField
           label="Tần suất tập thể dục (lần/tuần)"
-          id="exerciseFrequency"
+          name="step5.exerciseFrequency"
           placeholder="Ví dụ: 3"
-          value={formData.exerciseFrequency}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Loại bài tập thường xuyên"
-          id="exerciseType"
+          name="step5.exerciseType"
           placeholder="Ví dụ: Chạy bộ, yoga, bơi lội"
-          value={formData.exerciseType}
-          onChange={handleChange}
+          required
         />
-        <InputField
+        <FormikInputField
           label="Mức độ hoạt động hàng ngày"
-          id="activityLevel"
+          name="step5.activityLevel"
           placeholder="Ví dụ: Ít vận động, trung bình, rất năng động"
-          value={formData.activityLevel}
-          onChange={handleChange}
+          required
         />
 
         <div className="flex justify-between">

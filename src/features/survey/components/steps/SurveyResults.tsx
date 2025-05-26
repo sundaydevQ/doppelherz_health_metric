@@ -1,41 +1,18 @@
 import React from "react";
+import { useFormikContext } from "formik";
+import type { SurveyFormData } from "../types";
 
 export interface SurveyResultsProps {
-  formData: {
-    step1: {
-      name: string;
-      firstName: string;
-      lastName: string;
-      dob: string;
-      email: string;
-      income: string;
-    };
-    step3: {
-      height: string;
-      weight: string;
-      bloodPressure: string;
-      chronicConditions: string;
-    };
-    step4: {
-      mealsPerDay: string;
-      waterIntake: string;
-      dietaryRestrictions: string;
-    };
-    step5: {
-      exerciseFrequency: string;
-      exerciseType: string;
-      activityLevel: string;
-    };
-  };
+  formData: SurveyFormData;
   handleBack: () => void;
-  handleComplete: () => void;
 }
 
 const SurveyResults: React.FC<SurveyResultsProps> = ({
   formData,
   handleBack,
-  handleComplete,
 }) => {
+  const { submitForm, isSubmitting } = useFormikContext<SurveyFormData>();
+
   return (
     <>
       <div className="text-center lg:text-left mb-2">
@@ -53,23 +30,63 @@ const SurveyResults: React.FC<SurveyResultsProps> = ({
           <h2 className="text-lg font-semibold mb-4">Tóm tắt thông tin</h2>
 
           <div className="space-y-4">
+            {" "}
             <div>
               <h3 className="font-medium">Thông tin cá nhân</h3>
+              <p>Họ và tên: {formData.step1.fullName || "Chưa cung cấp"}</p>
               <p>
-                Tên: {formData.step1.name} {formData.step1.firstName}{" "}
-                {formData.step1.lastName}
+                Giới tính:{" "}
+                {formData.step1.gender === "male"
+                  ? "Nam"
+                  : formData.step1.gender === "female"
+                  ? "Nữ"
+                  : formData.step1.gender === "other"
+                  ? "Khác"
+                  : "Chưa cung cấp"}
               </p>
-              <p>Ngày sinh: {formData.step1.dob || "Chưa cung cấp"}</p>
-              <p>Email: {formData.step1.email || "Chưa cung cấp"}</p>
+              <p>Nghề nghiệp: {formData.step1.occupation || "Chưa cung cấp"}</p>
+              <p>
+                Số điện thoại: {formData.step1.phoneNumber || "Chưa cung cấp"}
+              </p>
+              <p>Email: {formData.step1.email || "Chưa cung cấp"}</p>{" "}
+              <p>Địa chỉ: {formData.step1.address || "Chưa cung cấp"}</p>
             </div>
-
+            <div>
+              <h3 className="font-medium">Thông tin khảo sát</h3>{" "}
+              <p>
+                Độ tuổi:{" "}
+                {formData.step2.age
+                  ? formData.step2.age === "under30"
+                    ? "Dưới 30 tuổi"
+                    : formData.step2.age === "30-34"
+                    ? "30 - 34 tuổi"
+                    : formData.step2.age === "35-39"
+                    ? "35 - 39 tuổi"
+                    : formData.step2.age === "40-44"
+                    ? "40 - 44 tuổi"
+                    : formData.step2.age === "45-49"
+                    ? "45 - 49 tuổi"
+                    : formData.step2.age === "50-54"
+                    ? "50 - 54 tuổi"
+                    : formData.step2.age === "55plus"
+                    ? "Từ 55 tuổi trở lên"
+                    : "Chưa cung cấp"
+                  : "Chưa cung cấp"}
+              </p>
+              <p>
+                Giờ ngủ mỗi ngày: {formData.step2.question1 || "Chưa cung cấp"}
+              </p>
+              <p>Tập thể dục: {formData.step2.question2 || "Chưa cung cấp"}</p>
+              <p>
+                Lượng nước uống: {formData.step2.question3 || "Chưa cung cấp"}
+              </p>
+            </div>
             <div>
               <h3 className="font-medium">Thông tin sức khỏe</h3>
               <p>Chiều cao: {formData.step3.height || "Chưa cung cấp"} cm</p>
               <p>Cân nặng: {formData.step3.weight || "Chưa cung cấp"} kg</p>
               <p>Huyết áp: {formData.step3.bloodPressure || "Chưa cung cấp"}</p>
             </div>
-
             <div>
               <h3 className="font-medium">Chế độ ăn uống</h3>
               <p>
@@ -81,7 +98,6 @@ const SurveyResults: React.FC<SurveyResultsProps> = ({
                 lít
               </p>
             </div>
-
             <div>
               <h3 className="font-medium">Hoạt động thể chất</h3>
               <p>
@@ -102,13 +118,14 @@ const SurveyResults: React.FC<SurveyResultsProps> = ({
             className="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             Quay lại
-          </button>
+          </button>{" "}
           <button
             type="button"
-            onClick={handleComplete}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            onClick={submitForm}
+            disabled={isSubmitting}
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-75"
           >
-            Hoàn thành
+            {isSubmitting ? "Đang xử lý..." : "Hoàn thành"}
           </button>
         </div>
       </div>

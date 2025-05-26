@@ -29,6 +29,9 @@ interface CustomButtonProps {
   variant?: ButtonVariant; // Add variant prop for compatibility with existing code
   href?: string;
   onClick?: () => void;
+  onPress?: () => void; // Add onPress prop for compatibility
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -113,9 +116,12 @@ const Button = ({
   `
     .trim()
     .replace(/\\s+/g, " "); // Pass the props directly
-
   return (
-    <HeroButton className={combinedClasses} {...props}>
+    <HeroButton
+      className={combinedClasses}
+      onClick={props.onPress || props.onClick}
+      {...props}
+    >
       {children}
     </HeroButton>
   );

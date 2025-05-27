@@ -255,7 +255,7 @@ const HomePage: React.FC = () => {
               <DoctorIllustration className="w-4/5 h-4/5" />
             </div>
           </div>
-        </div>{" "}
+        </div>
         {/* Features section - Responsive padding and sizing */}
         <div className="bg-white py-12 lg:py-24">
           <div

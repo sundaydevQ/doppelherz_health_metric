@@ -6,6 +6,8 @@ import {
 } from "../../../../shared";
 import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
+import { getPointDeduction } from "../scoringConfig";
+import { useMinusPointContext } from "../MinusPointProvider";
 
 export interface HealthInfoFormProps {
   handleNext: () => void;
@@ -17,24 +19,54 @@ const physicalSignsOptions = [
     value: "menstrualDisorders",
     label:
       "Rối loạn kinh nguyệt (chu kỳ không đều, kéo dài, vô kinh, ra ít, ...)",
+    points: getPointDeduction("step3.physicalSigns", "menstrualDisorders"),
   },
-  { value: "hotFlashesNightSweats", label: "Bốc hỏa, đổ mồ hôi đêm" },
+  {
+    value: "hotFlashesNightSweats",
+    label: "Bốc hỏa, đổ mồ hôi đêm",
+    points: getPointDeduction("step3.physicalSigns", "hotFlashesNightSweats"),
+  },
   {
     value: "vaginalDrynessPainfulIntercourse",
     label: "Khô âm đạo, đau khi quan hệ",
+    points: getPointDeduction(
+      "step3.physicalSigns",
+      "vaginalDrynessPainfulIntercourse"
+    ),
   },
-  { value: "decreasedLibido", label: "Giảm ham muốn tình dục" },
+  {
+    value: "decreasedLibido",
+    label: "Giảm ham muốn tình dục",
+    points: getPointDeduction("step3.physicalSigns", "decreasedLibido"),
+  },
   {
     value: "prolongedUnexplainedFatigue",
     label: "Mệt mỏi kéo dài không rõ nguyên nhân",
+    points: getPointDeduction(
+      "step3.physicalSigns",
+      "prolongedUnexplainedFatigue"
+    ),
   },
-  { value: "hairLossDrySkin", label: "Rụng tóc, da khô hơn rõ rệt" },
+  {
+    value: "hairLossDrySkin",
+    label: "Rụng tóc, da khô hơn rõ rệt",
+    points: getPointDeduction("step3.physicalSigns", "hairLossDrySkin"),
+  },
   {
     value: "abdominalWeightGain",
     label: "Tăng cân vùng bụng dù không ăn nhiều",
+    points: getPointDeduction("step3.physicalSigns", "abdominalWeightGain"),
   },
-  { value: "Bình thường", label: "Bình thường" },
-  { value: "other", label: "Khác" },
+  {
+    value: "Bình thường",
+    label: "Bình thường",
+    points: getPointDeduction("step3.physicalSigns", "Bình thường"),
+  },
+  {
+    value: "Khác",
+    label: "Khác",
+    points: getPointDeduction("step3.physicalSigns", "Khác"),
+  },
 ];
 
 const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
@@ -44,29 +76,53 @@ const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
   const [isValidating, setIsValidating] = useState(false);
   const { validateForm, setTouched, values, setFieldValue } =
     useFormikContext<SurveyFormData>();
-
+  const { triggerMinusPointAtElement } = useMinusPointContext();
   // Check if "other" is selected in physical signs
-  const isOtherSelected = values.step3?.physicalSigns?.includes("other");
+  const isOtherSelected = values.step3?.physicalSigns?.includes("Khác");
 
-  // Custom change handler for physical signs
+  // Handler for point deduction animations
+  const handlePointDeduction = (
+    points: number,
+    option: string,
+    element: HTMLElement
+  ) => {
+    if (points > 0) {
+      triggerMinusPointAtElement(
+        points,
+        element,
+        "step3.physicalSigns",
+        option
+      );
+    }
+  }; // Custom change handler for physical signs
   const handlePhysicalSignsChange = (
     value: string,
     currentValues: string[]
   ): string[] => {
-    if (value === "other") {
-      if (currentValues.includes("other")) {
-        // If "other" is already selected, deselect it
-        return currentValues.filter((item) => item !== "other");
+    if (value === "Bình thường") {
+      if (currentValues.includes("Bình thường")) {
+        // If "Bình thường" is already selected, deselect it
+        return currentValues.filter((item) => item !== "Bình thường");
       } else {
-        // If "other" is being selected, clear all other values and set only "other"
-        // Also clear the other description field when "other" is selected
+        // If "Bình thường" is being selected, clear all other values and set only "Bình thường"
+        setFieldValue("step3.otherPhysicalSigns", ""); // Clear description field
+        return ["Bình thường"];
+      }
+    } else if (value === "Khác") {
+      if (currentValues.includes("Khác")) {
+        // If "Khác" is already selected, deselect it
         setFieldValue("step3.otherPhysicalSigns", "");
-        return ["other"];
+        return currentValues.filter((item) => item !== "Khác");
+      } else {
+        // If "Khác" is being selected, clear "Bình thường" and other values, set only "Khác"
+        setFieldValue("step3.otherPhysicalSigns", "");
+        return ["Khác"];
       }
     } else {
-      // If any other option is selected while "other" is already selected,
-      // remove "other" and add the new selection
-      let newValues = currentValues.filter((item) => item !== "other");
+      // If any other option is selected, remove "Bình thường" and "Khác"
+      let newValues = currentValues.filter(
+        (item) => item !== "Khác" && item !== "Bình thường"
+      );
 
       if (currentValues.includes(value)) {
         // Remove the value if it's already selected
@@ -76,8 +132,8 @@ const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
         newValues = [...newValues, value];
       }
 
-      // Clear the other description field when "other" is deselected
-      if (currentValues.includes("other")) {
+      // Clear the other description field when switching away from "Khác"
+      if (currentValues.includes("Khác")) {
         setFieldValue("step3.otherPhysicalSigns", "");
       }
 
@@ -123,21 +179,13 @@ const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
 
   return (
     <>
-      <div className="text-center lg:text-left mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Thông tin sức khỏe
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Vui lòng cung cấp thông tin sức khỏe cơ bản của bạn.
-        </p>
-      </div>{" "}
       <div className="space-y-6 mt-8">
-        {" "}
         <FormikCheckboxGroupField
           label="Các dấu hiệu thể chất nếu có?"
           name="step3.physicalSigns"
           options={physicalSignsOptions}
           onCustomChange={handlePhysicalSignsChange}
+          onPointDeduction={handlePointDeduction}
           required
         />
         {/* Conditional input field for "Other" option */}

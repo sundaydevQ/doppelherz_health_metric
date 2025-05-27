@@ -6,9 +6,10 @@ import {
 import { Button } from "../../../../shared";
 import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
+import { getPointDeduction } from "../scoringConfig";
+import { useMinusPointContext } from "../MinusPointProvider";
 
 export interface MedicationFormProps {
-  handleNext: () => void;
   handleBack: () => void;
 }
 
@@ -16,84 +17,119 @@ const medicationOptions = [
   {
     value: "combinedHormonalContraceptives",
     label: "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)",
+    points: getPointDeduction(
+      "step6.medications",
+      "combinedHormonalContraceptives"
+    ),
   },
   {
     value: "corticosteroids",
     label: "Các thuốc corticoid (Prednisolone, Dexamethasone...)",
+    points: getPointDeduction("step6.medications", "corticosteroids"),
   },
   {
     value: "cancerTreatmentMeds",
     label: "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)",
+    points: getPointDeduction("step6.medications", "cancerTreatmentMeds"),
   },
   {
     value: "antidepressantsAntipsychotics",
     label: "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)",
+    points: getPointDeduction(
+      "step6.medications",
+      "antidepressantsAntipsychotics"
+    ),
   },
   {
     value: "thyroidMeds",
     label: "Thuốc điều trị cường giáp hoặc suy giáp",
+    points: getPointDeduction("step6.medications", "thyroidMeds"),
   },
   {
     value: "fertilityMeds",
     label: "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản",
+    points: getPointDeduction("step6.medications", "fertilityMeds"),
   },
   {
     value: "anticonvulsants",
     label: "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)",
+    points: getPointDeduction("step6.medications", "anticonvulsants"),
   },
-  { value: "Bình thường", label: "Bình thường" },
-  { value: "other", label: "Khác" },
+  {
+    value: "Không sử dụng",
+    label: "Không sử dụng",
+    points: getPointDeduction("step6.medications", "Không sử dụng"),
+  },
+  {
+    value: "Khác",
+    label: "Khác",
+    points: getPointDeduction("step6.medications", "Khác"),
+  },
 ];
 
-const MedicationForm: React.FC<MedicationFormProps> = ({
-  handleNext,
-  handleBack,
-}) => {
+const MedicationForm: React.FC<MedicationFormProps> = ({ handleBack }) => {
   const [isValidating, setIsValidating] = useState(false);
-  const { validateForm, setTouched, values, setFieldValue } =
+  const { validateForm, setTouched, values, setFieldValue, submitForm } =
     useFormikContext<SurveyFormData>();
+  const { triggerMinusPointAtElement } = useMinusPointContext();
 
+  // Point deduction handler for medications
+  const handlePointDeduction = (
+    points: number,
+    option: string,
+    element: HTMLElement
+  ) => {
+    if (points > 0) {
+      triggerMinusPointAtElement(points, element, "step6.medications", option);
+    }
+  };
   // Check if "other" is selected in medications
-  const isOtherMedicationSelected =
-    values.step6?.medications?.includes("other");
-
+  const isOtherMedicationSelected = values.step6?.medications?.includes("Khác");
   // Custom change handler for medications
   const handleMedicationsChange = (
     value: string,
     currentValues: string[]
   ): string[] => {
-    if (value === "other") {
-      if (currentValues.includes("other")) {
-        // If "other" is already selected, deselect it
-        setFieldValue("step6.otherMedications", ""); // Clear description
-        return currentValues.filter((item) => item !== "other");
+    if (value === "Không sử dụng") {
+      if (currentValues.includes("Không sử dụng")) {
+        // If "Không sử dụng" is already selected, deselect it
+        return currentValues.filter((item) => item !== "Không sử dụng");
       } else {
-        // If "other" is being selected, clear all other values and set only "other"
+        // If "Không sử dụng" is being selected, clear all other values and set only "Không sử dụng"
+        setFieldValue("step6.otherMedications", ""); // Clear description field
+        return ["Không sử dụng"];
+      }
+    } else if (value === "Khác") {
+      if (currentValues.includes("Khác")) {
+        // If "Khác" is already selected, deselect it
         setFieldValue("step6.otherMedications", ""); // Clear description
-        return ["other"];
+        return currentValues.filter((item) => item !== "Khác");
+      } else {
+        // If "Khác" is being selected, clear "Không sử dụng" and other values, set only "Khác"
+        setFieldValue("step6.otherMedications", ""); // Clear description
+        return ["Khác"];
       }
     } else {
-      // If any other option is selected
-      let newValues = [...currentValues].filter((item) => item !== "other"); // Ensure 'other' is not carried over if a non-other option is clicked
+      // If any other option is selected, remove "Không sử dụng" and "Khác"
+      let newValues = [...currentValues].filter(
+        (item) => item !== "Khác" && item !== "Không sử dụng"
+      );
 
       if (currentValues.includes(value)) {
-        // If the option is already selected (and it's not 'other'), deselect it
+        // If the option is already selected, deselect it
         newValues = newValues.filter((item) => item !== value);
       } else {
-        // If the option is not selected (and it's not 'other'), select it
+        // If the option is not selected, select it
         newValues.push(value);
       }
 
-      // If 'other' was in currentValues, it means we are switching from 'other' to a specific option
-      // or deselecting 'other' by clicking it again (handled above).
-      // We need to ensure the description field is cleared if 'other' is no longer the sole selection or part of the selection.
-      if (currentValues.includes("other")) {
+      // Clear description field if switching away from "Khác"
+      if (currentValues.includes("Khác")) {
         setFieldValue("step6.otherMedications", "");
       }
       return newValues;
     }
   };
-
   const handleNextWithValidation = async () => {
     setIsValidating(true);
     try {
@@ -112,67 +148,68 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
       const validationErrors = await validateForm();
       console.log("Validation errors for Step 6:", validationErrors);
 
-      // Check if there are any errors in step6
-      const hasStep6Errors = validationErrors.step6;
+      // Check if there are any validation errors for step 6
+      const step6ErrorKeys = Object.keys(validationErrors.step6 ?? {});
 
-      if (!hasStep6Errors) {
-        // If no errors, proceed to the next step
-        handleNext();
+      if (step6ErrorKeys.length === 0) {
+        console.log("No validation errors for Step 6, submitting form...");
+        // If no errors, call submitForm which will trigger SurveyPage's handleSubmit
+        await submitForm();
       } else {
         console.log(
-          "Validation failed for Step 6. Please check the form for errors."
+          "Validation errors found for Step 6, not submitting:",
+          validationErrors.step6
         );
+        // Optionally, focus on the first error field or display a general error message
       }
     } catch (error) {
-      console.error("Form validation error on Step 6:", error);
+      console.error("Error during validation or submission:", error);
+      // Handle any unexpected errors during the process
     } finally {
       setIsValidating(false);
     }
   };
 
   return (
-    <>
-      <div className="text-center lg:text-left mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Các loại thuốc bạn đã hoặc đang sử dụng
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Vui lòng cung cấp thông tin về các loại thuốc bạn đã hoặc đang sử dụng
-        </p>
-      </div>
-
-      <div className="space-y-6 mt-8">
-        <FormikCheckboxGroupField
-          label="Các loại thuốc bạn đã hoặc đang sử dụng?"
-          name="step6.medications"
-          options={medicationOptions}
-          onCustomChange={handleMedicationsChange}
+    <div className="flex flex-col space-y-6">
+      <h2 className="text-2xl font-semibold text-gray-700">
+        Bước 6: Thông tin về thuốc và thực phẩm chức năng
+      </h2>
+      {/* Medications */}
+      <FormikCheckboxGroupField
+        label="Các loại thuốc bạn đã hoặc đang sử dụng?"
+        name="step6.medications"
+        options={medicationOptions}
+        onCustomChange={handleMedicationsChange}
+        onPointDeduction={handlePointDeduction}
+      />
+      {isOtherMedicationSelected && (
+        <FormikInputField
+          label="Vui lòng mô tả cụ thể loại thuốc khác"
+          name="step6.otherMedications"
+          placeholder="Nhập loại thuốc khác..."
+          required
         />
-
-        {isOtherMedicationSelected && (
-          <FormikInputField
-            label="Vui lòng mô tả cụ thể loại thuốc khác"
-            name="step6.otherMedications"
-            placeholder="Nhập loại thuốc khác..."
-            required
-          />
-        )}
-
-        <div className="flex justify-between">
-          <Button type="button" onPress={handleBack} variant="bordered">
-            Quay lại
-          </Button>
-          <Button
-            type="button" // Changed to button to prevent form submission
-            onPress={handleNextWithValidation}
-            className=""
-            disabled={isValidating}
-          >
-            {isValidating ? "Đang xác thực..." : "Tiếp theo"}
-          </Button>
-        </div>
+      )}
+      <div className="flex justify-between mt-8">
+        <Button
+          type="button"
+          onPress={handleBack}
+          variant="bordered"
+          className="w-32"
+        >
+          Quay lại
+        </Button>
+        <Button
+          type="button"
+          onPress={handleNextWithValidation}
+          className="w-48" // Adjusted width for longer text
+          disabled={isValidating}
+        >
+          {isValidating ? "Đang kiểm tra..." : "Hoàn thành khảo sát"}
+        </Button>
       </div>
-    </>
+    </div>
   );
 };
 

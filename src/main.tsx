@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 import "./index.css";
-import { router } from "./router";
+import router from "./router";
 import { AuthProvider } from "./shared/contexts"; // Import using barrel file
 import { HeroUIProvider } from "@heroui/react";
 

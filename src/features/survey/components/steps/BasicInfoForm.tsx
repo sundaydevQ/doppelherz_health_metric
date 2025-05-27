@@ -64,15 +64,6 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
 
   return (
     <>
-      <div className="text-center lg:text-left mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Thông tin cơ bản
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Vui lòng hoàn thành các thông tin sau để bắt đầu khảo sát của bạn.
-        </p>
-      </div>
-
       <div className="space-y-6 mt-8">
         <FormikInputField
           label="Họ và tên"
@@ -104,7 +95,7 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
           name="step1.email"
           type="email"
           placeholder="example@email.com"
-        />{" "}
+        />
         <FormikInputField
           label="Địa chỉ"
           name="step1.address"

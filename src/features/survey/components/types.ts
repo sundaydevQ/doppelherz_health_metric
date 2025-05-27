@@ -8,6 +8,25 @@ export interface Step {
   status: StepStatus;
 }
 
+// Scoring configuration interface
+export interface ScoringConfig {
+  [key: string]: {
+    [optionValue: string]: number;
+  };
+}
+
+// Survey scoring state
+export interface SurveyScore {
+  currentScore: number;
+  maxScore: number;
+  deductions: Array<{
+    step: string;
+    option: string;
+    points: number;
+    timestamp: Date;
+  }>;
+}
+
 // Form data types for TypeScript
 export interface SurveyFormData {
   step1: {
@@ -37,5 +56,4 @@ export interface SurveyFormData {
     medications?: string[]; // Added for medications checkbox group
     otherMedications?: string; // Additional field for custom input when "other" is selected
   };
-  step7: Record<string, never>;
 }

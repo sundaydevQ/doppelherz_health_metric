@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import type { Step, SurveyFormData } from "./types";
+import type { Step, SurveyFormData, SurveyScore } from "./types";
 import type { FormikHelpers } from "formik";
 import { Form, Formik } from "formik";
+import { useNavigate } from "@tanstack/react-router"; // Changed import
 import StepProgress from "./StepProgress";
 import BasicInfoForm from "./steps/BasicInfoForm";
 import SurveyQuestionsForm from "./steps/SurveyQuestionsForm";
@@ -9,8 +10,12 @@ import HealthInfoForm from "./steps/HealthInfoForm";
 import DietAssessmentForm from "./steps/DietAssessmentForm";
 import PhysicalActivityForm from "./steps/PhysicalActivityForm";
 import MedicationForm from "./steps/MedicationForm";
-import SurveyResults from "./steps/SurveyResults";
+import { ScoreDisplay } from "./ScoreDisplay";
+import { ScoringProvider } from "./ScoringProvider";
+import { MinusPointProvider } from "./MinusPointProvider";
 import { getValidationSchemaByStep } from "./validationSchema";
+import { INITIAL_SCORE } from "./scoringConfig";
+import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
 
 // Initial steps data
 const initialSteps: Step[] = [
@@ -18,9 +23,8 @@ const initialSteps: Step[] = [
   { id: "02", name: "Thông tin về độ tuổi", status: "upcoming" },
   { id: "03", name: "Thông tin sức khỏe", status: "upcoming" },
   { id: "04", name: "Đánh giá tâm lý", status: "upcoming" },
-  { id: "05", name: "Hoạt động thể chất", status: "upcoming" },
+  { id: "05", name: "Yếu tố tiền sử và nguy cơ khác", status: "upcoming" },
   { id: "06", name: "Thông tin thuốc", status: "upcoming" },
-  { id: "07", name: "Xem kết quả", status: "upcoming" },
 ];
 
 // Initial form values that match the SurveyFormData structure
@@ -55,19 +59,38 @@ const initialFormValues: SurveyFormData = {
     medications: [],
     otherMedications: "",
   },
-  // Step 7: Review (no form inputs)
-  step7: {},
 };
 
 const SurveyPage: React.FC = () => {
+  const navigate = useNavigate(); // Correct hook for @tanstack/react-router
   // State for steps
   const [steps, setSteps] = useState<Step[]>(initialSteps);
+  const [isSurveyComplete, setIsSurveyComplete] = useState(false); // Added state for survey completion
 
   // Track the current step index (0-based)
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
+  // State for current score
+  const [currentScore, setCurrentScore] = useState<SurveyScore>({
+    currentScore: INITIAL_SCORE,
+    maxScore: INITIAL_SCORE,
+    deductions: [],
+  });
   // Get the validation schema for the current step
-  const currentValidationSchema = getValidationSchemaByStep(currentStepIndex); // Handle next step
+  const currentValidationSchema = getValidationSchemaByStep(currentStepIndex);
+  // Handle score updates
+  const handleScoreUpdate = (score: SurveyScore) => {
+    setCurrentScore(score);
+  };
+
+  // Handle score deductions for minus point animations
+  const handleScoreDeduction = (
+    points: number,
+    field: string,
+    option: string
+  ) => {
+    console.log(`Score deduction: -${points} points for ${field}:${option}`);
+  }; // Handle next step
   const handleNext = () => {
     // Only proceed if we're not at the last step
     if (currentStepIndex < steps.length - 1) {
@@ -124,11 +147,7 @@ const SurveyPage: React.FC = () => {
     actions: FormikHelpers<SurveyFormData>
   ) => {
     console.log("Form submitted with values:", values);
-    // Here you would typically submit the data to your backend
-    // For example: api.submitSurvey(values);
-
-    // Show success message or redirect user
-    alert("Cảm ơn bạn đã hoàn thành khảo sát!");
+    setIsSurveyComplete(true); // Set survey as complete
     actions.setSubmitting(false);
   }; // Render form based on current step
   const renderCurrentStepForm = () => {
@@ -158,11 +177,7 @@ const SurveyPage: React.FC = () => {
           />
         );
       case 5:
-        return (
-          <MedicationForm handleNext={handleNext} handleBack={handleBack} />
-        );
-      case 6:
-        return <SurveyResults handleBack={handleBack} />;
+        return <MedicationForm handleBack={handleBack} />;
       default:
         return null;
     }
@@ -178,22 +193,75 @@ const SurveyPage: React.FC = () => {
     >
       {() => (
         <Form>
-          <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-            <StepProgress
-              steps={steps}
-              currentStepIndex={currentStepIndex}
-              handleBack={handleBack}
-              goToStep={goToStep}
-            />
+          <MinusPointProvider>
+            <ScoringProvider
+              onScoreUpdate={handleScoreUpdate}
+              onScoreDeduction={handleScoreDeduction}
+            >
+              <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-surface-50 via-surface-100 to-doppelherz-light/20">
+                <StepProgress
+                  steps={steps}
+                  currentStepIndex={currentStepIndex}
+                  handleBack={handleBack}
+                  goToStep={goToStep}
+                />
+                {/* Main Content Area with Beautiful Design */}
+                <main className="w-full lg:w-2/3 p-3 sm:p-4 md:p-6 lg:p-8 relative">
+                  {/* Background decoration */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-r from-doppelherz-primary/5 to-doppelherz-accent/5 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-20 left-10 w-96 h-96 bg-gradient-to-r from-health-excellent/5 to-doppelherz-primary/5 rounded-full blur-3xl"></div>
+                  </div>
 
-            {/* Main Content Area */}
-            <main className="w-full lg:w-2/3 p-4 sm:p-6 lg:p-8">
-              {/* Render the current step form */}
-              <div className="max-w-lg mx-auto lg:mx-0">
-                {renderCurrentStepForm()}
+                  {/* Score Display with Enhanced Styling */}
+                  {currentStepIndex > 0 && (
+                    <div className="mb-6 sm:mb-8 relative z-10">
+                      <ScoreDisplay
+                        score={currentScore}
+                        className="glass-effect shadow-colored"
+                        showMinusPointAnimations={true}
+                      />
+                    </div>
+                  )}
+
+                  {/* Form Container with Beautiful Card Design */}
+                  <div className="max-w-full mx-auto lg:mx-0 relative z-10">
+                    <div className="card-elevated p-6 sm:p-8 animate-scale-in">
+                      {/* Form Title with Gradient Text */}
+                      <div className="mb-6">
+                        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                          {steps[currentStepIndex]?.name}
+                        </h1>
+                        <p className="text-surface-600 text-sm sm:text-base">
+                          Vui lòng điền thông tin chính xác để nhận được kết quả
+                          đánh giá tốt nhất
+                        </p>
+                      </div>
+
+                      {/* Render Form */}
+                      <div className="animate-fade-in">
+                        {renderCurrentStepForm()}
+                      </div>
+                    </div>
+                  </div>
+                </main>
               </div>
-            </main>
-          </div>
+              <SurveyCompletionPopup
+                isOpen={isSurveyComplete}
+                onClose={() => {
+                  setIsSurveyComplete(false);
+                  // Navigate to the analysis page with the score
+                  navigate({
+                    to: "/survey/analysis/$score",
+                    params: { score: currentScore.currentScore },
+                  });
+                }}
+                title="Khảo sát hoàn tất!"
+                message="Cảm ơn bạn đã hoàn thành khảo sát. Kết quả của bạn đã được ghi nhận."
+                buttonText="Xem kết quả phân tích"
+              />
+            </ScoringProvider>
+          </MinusPointProvider>
         </Form>
       )}
     </Formik>

@@ -97,7 +97,7 @@ const ResizableResponsiveNavBar: React.FC = () => {
         <MobileNavHeader>
           <NavbarLogo />
           <MobileNavToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-        </MobileNavHeader>{" "}
+        </MobileNavHeader>
         <MobileNavMenu isOpen={isOpen}>
           {menuItems.map((item) =>
             item.external ? (

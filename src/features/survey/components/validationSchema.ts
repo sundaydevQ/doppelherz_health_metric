@@ -94,7 +94,6 @@ export const combinedSchema = Yup.object({
   ...dietAssessmentSchema.fields,
   ...physicalActivitySchema.fields,
   ...medicationSchema.fields,
-  step7: Yup.object().default({}),
 });
 
 // Get validation schema by step index
@@ -112,8 +111,6 @@ export const getValidationSchemaByStep = (stepIndex: number) => {
       return physicalActivitySchema;
     case 5:
       return medicationSchema;
-    case 6: // Results page, no validation needed
-      return Yup.object();
     default:
       return Yup.object(); // Default empty schema
   }

@@ -6,6 +6,8 @@ import {
 import { Button } from "../../../../shared";
 import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
+import { getPointDeduction } from "../scoringConfig";
+import { useMinusPointContext } from "../MinusPointProvider";
 
 export interface PhysicalActivityFormProps {
   handleNext: () => void;
@@ -16,33 +18,60 @@ const riskFactorsOptions = [
   {
     value: "earlyHysterectomyOrOophorectomy",
     label: "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)",
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "earlyHysterectomyOrOophorectomy"
+    ),
   },
-  { value: "menopause", label: "Mãn kinh (12 tháng không có kinh)" },
+  {
+    value: "menopause",
+    label: "Mãn kinh (12 tháng không có kinh)",
+    points: getPointDeduction("step5.riskFactors", "menopause"),
+  },
   {
     value: "nightShiftsOrChronicSleepDeprivation",
     label: "Làm việc ca đêm, thiếu ngủ thường xuyên",
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "nightShiftsOrChronicSleepDeprivation"
+    ),
   },
   {
     value: "chronicStress",
     label: "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình",
+    points: getPointDeduction("step5.riskFactors", "chronicStress"),
   },
   {
     value: "extremeDietingOrRapidWeightLoss",
     label: "Ăn kiêng cực đoan, sụt cân nhanh",
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "extremeDietingOrRapidWeightLoss"
+    ),
   },
   {
     value: "sedentaryLifestyle",
     label: "Không vận động thể chất thường xuyên",
+    points: getPointDeduction("step5.riskFactors", "sedentaryLifestyle"),
   },
   {
     value: "smokingOrRegularAlcoholConsumption",
     label: "Hút thuốc lá hoặc uống rượu thường xuyên",
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "smokingOrRegularAlcoholConsumption"
+    ),
   },
   {
     value: "Bình thường",
     label: "Bình thường",
+    points: getPointDeduction("step5.riskFactors", "Bình thường"),
   },
-  { value: "other", label: "Khác" },
+  {
+    value: "Khác",
+    label: "Khác",
+    points: getPointDeduction("step5.riskFactors", "Khác"),
+  },
 ];
 
 const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
@@ -52,42 +81,60 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
   const [isValidating, setIsValidating] = useState(false);
   const { validateForm, setTouched, values, setFieldValue } =
     useFormikContext<SurveyFormData>();
+  const { triggerMinusPointAtElement } = useMinusPointContext();
 
+  // Point deduction handler for risk factors
+  const handlePointDeduction = (
+    points: number,
+    option: string,
+    element: HTMLElement
+  ) => {
+    if (points > 0) {
+      triggerMinusPointAtElement(points, element, "step5.riskFactors", option);
+    }
+  };
   // Check if "other" is selected in risk factors
-  const isOtherRiskFactorSelected =
-    values.step5?.riskFactors?.includes("other");
-
+  const isOtherRiskFactorSelected = values.step5?.riskFactors?.includes("Khác");
   // Custom change handler for risk factors
   const handleRiskFactorsChange = (
     value: string,
     currentValues: string[]
   ): string[] => {
-    if (value === "other") {
-      if (currentValues.includes("other")) {
-        // If "other" is already selected, deselect it
-        setFieldValue("step5.otherRiskFactors", ""); // Clear description
-        return currentValues.filter((item) => item !== "other");
+    if (value === "Bình thường") {
+      if (currentValues.includes("Bình thường")) {
+        // If "Bình thường" is already selected, deselect it
+        return currentValues.filter((item) => item !== "Bình thường");
       } else {
-        // If "other" is being selected, clear all other values and set only "other"
+        // If "Bình thường" is being selected, clear all other values and set only "Bình thường"
+        setFieldValue("step5.otherRiskFactors", ""); // Clear description field
+        return ["Bình thường"];
+      }
+    } else if (value === "Khác") {
+      if (currentValues.includes("Khác")) {
+        // If "Khác" is already selected, deselect it
         setFieldValue("step5.otherRiskFactors", ""); // Clear description
-        return ["other"];
+        return currentValues.filter((item) => item !== "Khác");
+      } else {
+        // If "Khác" is being selected, clear "Bình thường" and other values, set only "Khác"
+        setFieldValue("step5.otherRiskFactors", ""); // Clear description
+        return ["Khác"];
       }
     } else {
-      // If any other option is selected
-      let newValues = [...currentValues].filter((item) => item !== "other"); // Ensure 'other' is not carried over if a non-other option is clicked
+      // If any other option is selected, remove "Bình thường" and "Khác"
+      let newValues = [...currentValues].filter(
+        (item) => item !== "Khác" && item !== "Bình thường"
+      );
 
       if (currentValues.includes(value)) {
-        // If the option is already selected (and it's not 'other'), deselect it
+        // If the option is already selected, deselect it
         newValues = newValues.filter((item) => item !== value);
       } else {
-        // If the option is not selected (and it's not 'other'), select it
+        // If the option is not selected, select it
         newValues.push(value);
       }
 
-      // If 'other' was in currentValues, it means we are switching from 'other' to a specific option
-      // or deselecting 'other' by clicking it again (handled above).
-      // We need to ensure the description field is cleared if 'other' is no longer the sole selection or part of the selection.
-      if (currentValues.includes("other")) {
+      // Clear description field if switching away from "Khác"
+      if (currentValues.includes("Khác")) {
         setFieldValue("step5.otherRiskFactors", "");
       }
       return newValues;
@@ -132,22 +179,14 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
 
   return (
     <>
-      <div className="text-center lg:text-left mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Yếu tố tiền sử và nguy cơ khác
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Vui lòng cung cấp thông tin về các yếu tố tiền sử và nguy cơ khác
-        </p>
-      </div>{" "}
       <div className="space-y-6 mt-8">
         <FormikCheckboxGroupField
           label="Các yếu tố tiền sử và nguy cơ khác nếu có?"
           name="step5.riskFactors"
           options={riskFactorsOptions}
           onCustomChange={handleRiskFactorsChange}
+          onPointDeduction={handlePointDeduction}
         />
-
         {isOtherRiskFactorSelected && (
           <FormikInputField
             label="Vui lòng mô tả cụ thể yếu tố nguy cơ khác"
@@ -156,7 +195,6 @@ const PhysicalActivityForm: React.FC<PhysicalActivityFormProps> = ({
             required
           />
         )}
-
         <div className="flex justify-between">
           <Button type="button" onPress={handleBack} variant="bordered">
             Quay lại

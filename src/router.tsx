@@ -1,22 +1,11 @@
-import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
+import { RootRoute, Route, Router } from "@tanstack/react-router";
 
 // Import your page components using barrel files
 import { RootLayout } from "./shared/layouts";
 import { HomePage } from "./features/home";
 import { LoginPage } from "./features/auth";
 import { SurveyPage } from "./features/survey";
-
-// Placeholder for authentication check
-// We will replace this with actual auth logic later
-const isAuthenticated = () => {
-  // For now, let's assume the user is not authenticated
-  // In a real app, you'd check a token, context, etc.
-  console.log(
-    "Current auth state (placeholder):",
-    localStorage.getItem("isAuthenticated") === "true"
-  );
-  return localStorage.getItem("isAuthenticated") === "true";
-};
+import { SurveyAnalysisPage } from "./features/survey";
 
 // Create a root route
 const rootRoute = new RootRoute({
@@ -37,34 +26,45 @@ const loginRoute = new Route({
   component: LoginPage,
 });
 
-// Create route for the survey page (protected)
+// Create route for the survey page
 const surveyRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/survey",
   component: SurveyPage,
-  beforeLoad: ({ location }) => {
-    // We can enhance this later with auth context if needed
-    if (!isAuthenticated()) {
-      throw redirect({
-        to: "/login",
-        search: {
-          // Optionally pass the original destination to redirect back after login
-          redirect: location.href,
-        },
-      });
-    }
+});
+
+// Create route for the survey analysis page
+const surveyAnalysisRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/survey/analysis/$score", // Changed to use $score for param
+  parseParams: (params: { score: string }) => ({
+    score: parseInt(params.score, 10),
+  }),
+  validateSearch: (search: Record<string, unknown>): { score?: number } => {
+    // This is a basic example; you might want more robust validation
+    return {
+      score: search.score as number | undefined,
+    };
   },
+  component: SurveyAnalysisPage,
 });
 
 // Create the route tree
-const routeTree = rootRoute.addChildren([homeRoute, loginRoute, surveyRoute]);
+const routeTree = rootRoute.addChildren([
+  homeRoute,
+  loginRoute,
+  surveyRoute,
+  surveyAnalysisRoute, // Added surveyAnalysisRoute
+]);
 
 // Create the router instance
-export const router = new Router({ routeTree });
+const router = new Router({ routeTree });
 
-// Register your router for maximum type safety
+// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
+
+export default router;

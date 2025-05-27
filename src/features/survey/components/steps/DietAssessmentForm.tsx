@@ -3,6 +3,8 @@ import { FormikInputField } from "../../../../shared/components";
 import { Button, FormikCheckboxGroupField } from "../../../../shared";
 import { useFormikContext } from "formik";
 import type { SurveyFormData } from "../types";
+import { getPointDeduction } from "../scoringConfig";
+import { useMinusPointContext } from "../MinusPointProvider";
 
 export interface DietAssessmentFormProps {
   handleNext: () => void;
@@ -10,15 +12,39 @@ export interface DietAssessmentFormProps {
 }
 
 const psychologicalSignsOptions = [
-  { value: "sleepProblems", label: "Khó ngủ, mất ngủ, ngủ không sâu giấc" },
-  { value: "moodSwings", label: "Tâm trạng thất thường, dễ cáu gắt" },
+  {
+    value: "sleepProblems",
+    label: "Khó ngủ, mất ngủ, ngủ không sâu giấc",
+    points: getPointDeduction("step4.psychologicalSigns", "sleepProblems"),
+  },
+  {
+    value: "moodSwings",
+    label: "Tâm trạng thất thường, dễ cáu gắt",
+    points: getPointDeduction("step4.psychologicalSigns", "moodSwings"),
+  },
   {
     value: "memoryConcentration",
     label: "Giảm trí nhớ ngắn hạn, khó tập trung",
+    points: getPointDeduction(
+      "step4.psychologicalSigns",
+      "memoryConcentration"
+    ),
   },
-  { value: "anxiety", label: "Cảm giác lo âu vô cớ" },
-  { value: "Bình thường", label: "Bình thường" },
-  { value: "other", label: "Khác" },
+  {
+    value: "anxiety",
+    label: "Cảm giác lo âu vô cớ",
+    points: getPointDeduction("step4.psychologicalSigns", "anxiety"),
+  },
+  {
+    value: "Bình thường",
+    label: "Bình thường",
+    points: getPointDeduction("step4.psychologicalSigns", "Bình thường"),
+  },
+  {
+    value: "Khác",
+    label: "Khác",
+    points: getPointDeduction("step4.psychologicalSigns", "other"),
+  },
 ];
 
 const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
@@ -28,29 +54,53 @@ const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
   const [isValidating, setIsValidating] = useState(false);
   const { validateForm, setTouched, values, setFieldValue } =
     useFormikContext<SurveyFormData>();
-
+  const { triggerMinusPointAtElement } = useMinusPointContext();
   // Check if "other" is selected in psychological signs
-  const isOtherSelected = values.step4?.psychologicalSigns?.includes("other");
+  const isOtherSelected = values.step4?.psychologicalSigns?.includes("Khác");
 
-  // Custom change handler for psychological signs
+  // Handler for point deduction animations
+  const handlePointDeduction = (
+    points: number,
+    option: string,
+    element: HTMLElement
+  ) => {
+    if (points > 0) {
+      triggerMinusPointAtElement(
+        points,
+        element,
+        "step4.psychologicalSigns",
+        option
+      );
+    }
+  }; // Custom change handler for psychological signs
   const handlePsychologicalSignsChange = (
     value: string,
     currentValues: string[]
   ): string[] => {
-    if (value === "other") {
-      if (currentValues.includes("other")) {
-        // If "other" is already selected, deselect it
-        return currentValues.filter((item) => item !== "other");
+    if (value === "Bình thường") {
+      if (currentValues.includes("Bình thường")) {
+        // If "Bình thường" is already selected, deselect it
+        return currentValues.filter((item) => item !== "Bình thường");
       } else {
-        // If "other" is being selected, clear all other values and set only "other"
-        // Also clear the other description field when "other" is selected
+        // If "Bình thường" is being selected, clear all other values and set only "Bình thường"
+        setFieldValue("step4.otherPsychologicalSigns", ""); // Clear description field
+        return ["Bình thường"];
+      }
+    } else if (value === "Khác") {
+      if (currentValues.includes("Khác")) {
+        // If "Khác" is already selected, deselect it
         setFieldValue("step4.otherPsychologicalSigns", "");
-        return ["other"];
+        return currentValues.filter((item) => item !== "Khác");
+      } else {
+        // If "Khác" is being selected, clear "Bình thường" and other values, set only "Khác"
+        setFieldValue("step4.otherPsychologicalSigns", "");
+        return ["Khác"];
       }
     } else {
-      // If any other option is selected while "other" is already selected,
-      // remove "other" and add the new selection
-      let newValues = currentValues.filter((item) => item !== "other");
+      // If any other option is selected, remove "Bình thường" and "Khác"
+      let newValues = currentValues.filter(
+        (item) => item !== "Khác" && item !== "Bình thường"
+      );
 
       if (currentValues.includes(value)) {
         // Remove the value if it's already selected
@@ -60,8 +110,8 @@ const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
         newValues = [...newValues, value];
       }
 
-      // Clear the other description field when "other" is deselected
-      if (currentValues.includes("other")) {
+      // Clear the other description field when switching away from "Khác"
+      if (currentValues.includes("Khác")) {
         setFieldValue("step4.otherPsychologicalSigns", "");
       }
 
@@ -107,21 +157,13 @@ const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
 
   return (
     <>
-      <div className="text-center lg:text-left mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Đánh giá tâm lý
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Vui lòng chia sẻ thông tin về tình trạng tâm lý của bạn.
-        </p>
-      </div>
       <div className="space-y-6 mt-8">
-        {" "}
         <FormikCheckboxGroupField
           label="Các dấu hiệu tâm lý nếu có?"
           name="step4.psychologicalSigns"
           options={psychologicalSignsOptions}
           onCustomChange={handlePsychologicalSignsChange}
+          onPointDeduction={handlePointDeduction}
         />
         {/* Conditional input field for "Other" option */}
         {isOtherSelected && (

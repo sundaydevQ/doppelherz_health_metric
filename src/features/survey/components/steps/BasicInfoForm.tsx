@@ -31,8 +31,6 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
         },
       };
 
-      return handleNext();
-
       // First set touched without validation
       await setTouched(step1Fields, false);
 
@@ -68,7 +66,7 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
         <FormikInputField
           label="Họ và tên"
           name="step1.fullName"
-          placeholder="Nguyễn Văn A"
+          placeholder="Mai Ngọc A"
           required
         />
         <FormikRadioGroupField

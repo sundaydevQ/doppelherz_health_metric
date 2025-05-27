@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../../shared/hooks"; // Import useAuth
 import {
+  BackgroundBeamsWithCollision,
   // ResponsiveGrid, // No longer used
   // ResponsiveCard, // No longer used
   Button,
-  DoctorIllustration,
+  TextGenerateEffect,
+  // DoctorIllustration, // No longer used - replaced with PNG image
   // HealthTrackingIllustration, // No longer used
   // PersonalInsightsIllustration, // No longer used
   // ProgressReportsIllustration, // No longer used
@@ -215,47 +217,61 @@ const HomePage: React.FC = () => {
         {/* Hero section - Improved responsive sizing */}
         <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 gap-8 lg:gap-12">
           {/* Left content */}
-          <div className="lg:w-1/2 lg:pr-4">
-            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">
-              Doppelherz Health Metric
-            </h1>
-            <p className="text-lg lg:text-xl text-gray-700 mb-8 lg:mb-10 max-w-xl">
-              Cân bằng nội tiết tố, tối ưu hóa sức khỏe toàn diện. Giải pháp
-              theo dõi sức khỏe thông minh giúp bạn có cuộc sống khỏe mạnh hơn.
-            </p>
-            <div className="flex flex-wrap gap-4 lg:gap-6">
-              <Button onPress={handleStartNavigation} className="flex-shrink-0">
-                Bắt đầu ngay
-                <span className="ml-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                  </svg>
-                </span>
-              </Button>
-              <Button href="/" variant="bordered" className="flex-shrink-0">
-                Tìm hiểu thêm
-              </Button>
+          <BackgroundBeamsWithCollision>
+            <div className="lg:w-1/2 lg:pr-4">
+              <h1
+                style={{ letterSpacing: "0.05em", lineHeight: "1.2" }}
+                className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-800 mb-4 lg:mb-6"
+              >
+                Doppelherz Health Metric
+              </h1>
+              <p className="mb-8 lg:mb-10 max-w-xl">
+                <TextGenerateEffect
+                  className="text-lg lg:text-xl text-gray-700"
+                  words="Cân bằng nội tiết tố, tối ưu hóa sức khỏe toàn diện. Giải pháp theo dõi sức khỏe thông minh giúp bạn có cuộc sống khỏe mạnh hơn."
+                />
+              </p>
+              <div className="flex flex-wrap gap-4 lg:gap-6">
+                <Button
+                  onPress={handleStartNavigation}
+                  className="flex-shrink-0"
+                >
+                  Bắt đầu ngay
+                  <span className="ml-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                  </span>
+                </Button>
+                <Button href="/" variant="bordered" className="flex-shrink-0">
+                  Tìm hiểu thêm
+                </Button>
+              </div>
             </div>
-          </div>
-
+          </BackgroundBeamsWithCollision>
           {/* Right image - Responsive sizing */}
           <div className="lg:w-1/2 flex justify-center">
             <div className="rounded-3xl w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] xl:w-[400px] xl:h-[400px] bg-gradient-to-b from-[#8c62e3] to-[#6942af] flex items-center justify-center shadow-xl">
-              <DoctorIllustration className="w-4/5 h-4/5" />
+              <img
+                src="src/assets/images/doctor.png"
+                alt="Doctor illustration"
+                className="w-4/5 h-4/5 object-contain"
+              />
             </div>
           </div>
         </div>
+
         {/* Features section - Responsive padding and sizing */}
         <div className="bg-white py-12 lg:py-24">
           <div

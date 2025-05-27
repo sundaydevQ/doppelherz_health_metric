@@ -1,5 +1,8 @@
 // Shared components barrel file
 export { default as Button } from "./Button";
+export { BackgroundBeamsWithCollision } from "./BackgroundBeamsWithCollision";
+export { ColourfulText } from "./ColourfulText";
+export { TextGenerateEffect } from "./TextGenerateEffect";
 export { default as DoctorIllustration } from "./DoctorIllustration";
 export { default as HealthTrackingIllustration } from "./HealthTrackingIllustration";
 export { default as NavbarMenu } from "./NavbarMenu";

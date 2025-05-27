@@ -87,12 +87,75 @@ const getBannerContentByScore = (score: number) => {
   }
 };
 
+const getHealthSuggestionsByScore = (score: number) => {
+  if (score >= 85) {
+    return [
+      {
+        icon: <MoonIcon />,
+        text: "Duy trì lối sống lành mạnh: sinh hoạt nghỉ ngơi điều độ (ngủ 7-8 tiếng/ ngày)",
+        bgColor: "bg-green-200",
+      },
+      {
+        icon: <HeartIcon />,
+        text: "Bổ sung dinh dưỡng cân bằng, tập luyện thể dục 3-5 lần/ tuần, khám sức khỏe định kỳ đều đặn",
+        bgColor: "bg-green-200",
+      },
+    ];
+  } else if (score >= 65) {
+    return [
+      {
+        icon: <span className="text-xl">🥗</span>,
+        text: "Bổ sung các thực phẩm giàu isoflavone, các vitamin đặc biệt nhóm B,E",
+        bgColor: "bg-yellow-200",
+      },
+      {
+        icon: <MoonIcon />,
+        text: "Chăm sóc chất lượng giấc ngủ, cân bằng cuộc sống, giảm stress",
+        bgColor: "bg-yellow-200",
+      },
+      {
+        icon: <span className="text-xl">🚫</span>,
+        text: "Hạn chế các chất kích thích như café, rượu bia, thuốc lá",
+        bgColor: "bg-yellow-200",
+      },
+    ];
+  } else if (score >= 40) {
+    return [
+      {
+        icon: <span className="text-xl">💊</span>,
+        text: "Nên bổ sung nội tiết nữ thực vật, canxi, collagen, các vitamin và khoáng chất",
+        bgColor: "bg-orange-200",
+      },
+      {
+        icon: <span className="text-xl">🔄</span>,
+        text: "Thay đổi lối sống lành mạnh",
+        bgColor: "bg-orange-200",
+      },
+      {
+        icon: <span className="text-xl">👨‍⚕️</span>,
+        text: "Khám sức khỏe định kỳ và lắng nghe tư vấn từ bác sĩ, dược sĩ",
+        bgColor: "bg-orange-200",
+      },
+    ];
+  } else {
+    return [
+      {
+        icon: <span className="text-xl">📋</span>,
+        text: "Cần lập kế hoạch chăm sóc chuyên sâu",
+        bgColor: "bg-red-200",
+      },
+      {
+        icon: <span className="text-xl">🏥</span>,
+        text: "Nếu đã mãn kinh hoặc cắt buồng trứng, hãy tham khảo bác sĩ nội tiết/sản phụ khoa để có giải pháp chăm sóc phù hợp nhất",
+        bgColor: "bg-red-200",
+      },
+    ];
+  }
+};
+
 // Placeholder icons (replace with actual SVGs or an icon library)
-const ShoeIcon = () => <span className="text-xl">👟</span>;
 const FireIcon = () => <span className="text-xl">🔥</span>;
-const MountainIcon = () => <span className="text-xl">⛰️</span>;
 const ThumbsUpIcon = () => <span className="text-xl">👍</span>;
-const TrophyIcon = () => <span className="text-5xl">🏆</span>;
 const MoonIcon = () => <span className="text-xl">🌙</span>;
 const HeartIcon = () => <span className="text-xl">❤️</span>;
 const CheckCircleIcon = () => <span className="text-xl">✅</span>;
@@ -120,36 +183,17 @@ const SurveyAnalysisPage: React.FC = () => {
       </div>
     );
   }
-
   const analysis = getAnalysisByScore(numericScore);
   const bannerContent = getBannerContentByScore(numericScore);
+  const healthSuggestions = getHealthSuggestionsByScore(numericScore);
 
   // Main page content starts here
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 pb-20">
       {/* Header */}
       <header className="p-4 flex items-center sticky top-0 bg-gray-50 z-10 shadow-sm">
-        <button
-          onClick={() => navigate({ to: "/survey" })}
-          className="text-doppelherz-primary hover:text-doppelherz-dark p-2 rounded-full hover:bg-gray-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
         <h1 className="text-xl font-semibold text-gray-700 ml-4">
-          Health Status
+          Phân tích kết quả khảo sát
         </h1>
         {/* Optional: Fire icon on the right */}
         <div className="ml-auto p-2 text-orange-500">
@@ -199,35 +243,26 @@ const SurveyAnalysisPage: React.FC = () => {
         >
           {bannerContent.icon}
           <p className="ml-2 text-sm font-medium">{bannerContent.message}</p>
-        </section>
-        {/* Recent Health Status - Placeholder */}
+        </section>{" "}
+        {/* Health Suggestions - Dynamic based on score */}
         <section className="p-6 bg-white rounded-xl shadow-lg">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
             Lời khuyên từ chuyên gia chăm sóc sức khỏe
           </h2>
           <div className="space-y-4">
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-              <div className="p-2 bg-purple-200 rounded-full">
-                <MoonIcon />
+            {healthSuggestions.map((suggestion, index) => (
+              <div
+                key={index}
+                className="flex items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <div className={`p-2 ${suggestion.bgColor} rounded-full`}>
+                  {suggestion.icon}
+                </div>
+                <div className="ml-3 flex-grow">
+                  <p className="font-normal">{suggestion.text}</p>
+                </div>
               </div>
-              <div className="ml-3 flex-grow">
-                <p className="font-normal">
-                  Duy trì lối sống lành mạnh: sinh hoạt nghỉ ngơi điều độ (ngủ
-                  7-8 tiếng/ ngày)
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-              <div className="p-2 bg-red-200 rounded-full">
-                <HeartIcon />
-              </div>
-              <div className="ml-3 flex-grow">
-                <p className="font-normal">
-                  Bổ sung dinh dưỡng cân bằng, tập luyện thể dục 3-5 lần/ tuần,
-                  khám sức khỏe định kỳ đều đặn
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
         {/* Error case for no analysis found (should be handled earlier, but as a fallback) */}

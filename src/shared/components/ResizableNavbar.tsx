@@ -9,7 +9,6 @@ import {
 } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import Button from "./Button";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -307,7 +306,6 @@ export const NavbarLogo = () => {
         width={42}
         height={42}
       />
-      <span className="font-medium text-black">Doppelherz</span>
     </Link>
   );
 };

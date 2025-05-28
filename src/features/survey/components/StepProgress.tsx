@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "@tanstack/react-router";
 import type { Step } from "./types";
 
 interface StepProgressProps {
@@ -15,21 +16,33 @@ const StepProgress: React.FC<StepProgressProps> = ({
   handleBack,
   goToStep,
 }) => {
+  const navigate = useNavigate();
   const [showStepsModal, setShowStepsModal] = useState(false);
+
+  const handleLogoClick = () => {
+    navigate({ to: "/" });
+  };
   return (
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-1/3 bg-white p-8 border-r border-gray-200 shadow-md">
+        {" "}
         <div className="mb-12">
-          <img
-            src="/src/assets/images/logo.png"
-            alt="Doppelherz"
-            className="h-20"
-          />
+          <button
+            onClick={handleLogoClick}
+            className="block hover:opacity-80 transition-opacity duration-200"
+            aria-label="Go to home page"
+          >
+            <img
+              src="/src/assets/images/logo.png"
+              alt="Doppelherz"
+              className="h-20 cursor-pointer"
+            />
+          </button>
         </div>
         <nav aria-label="Progress">
           <h2 className="text-lg font-semibold text-gray-800 mb-6">
-            Health Assessment Progress
+            Tiến trình đánh giá sức khỏe
           </h2>
           <ol role="list" className="space-y-8">
             {steps.map((step, stepIdx) => (

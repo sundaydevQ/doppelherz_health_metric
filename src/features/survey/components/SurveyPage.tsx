@@ -16,6 +16,7 @@ import { MinusPointProvider } from "./MinusPointProvider";
 import { getValidationSchemaByStep } from "./validationSchema";
 import { INITIAL_SCORE } from "./scoringConfig";
 import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
+import { addSurveyData } from "../../../shared";
 
 // Initial steps data
 const initialSteps: Step[] = [
@@ -145,6 +146,21 @@ const SurveyPage: React.FC = () => {
       setCurrentStepIndex(stepIndex);
     }
   };
+  const handleClose = async () => {
+    try {
+      await addSurveyData();
+      // setIsSurveyComplete(false);
+      // // Save completion state to localStorage
+      // localStorage.setItem("isComplete", "true");
+      // // Navigate to the analysis page with the score
+      // navigate({
+      //   to: "/survey/analysis/$score",
+      //   params: { score: currentScore.currentScore },
+      // });
+    } catch (error) {
+      console.error("Error handling survey completion:", error);
+    }
+  };
   // Handle form submission
   const handleSubmit = (
     values: SurveyFormData,
@@ -252,16 +268,7 @@ const SurveyPage: React.FC = () => {
               </div>{" "}
               <SurveyCompletionPopup
                 isOpen={isSurveyComplete}
-                onClose={() => {
-                  setIsSurveyComplete(false);
-                  // Save completion state to localStorage
-                  localStorage.setItem("isComplete", "true");
-                  // Navigate to the analysis page with the score
-                  navigate({
-                    to: "/survey/analysis/$score",
-                    params: { score: currentScore.currentScore },
-                  });
-                }}
+                onClose={handleClose}
                 title="Khảo sát hoàn tất!"
                 message="Cảm ơn bạn đã hoàn thành khảo sát. Kết quả của bạn đã được ghi nhận."
                 buttonText="Xem kết quả phân tích"

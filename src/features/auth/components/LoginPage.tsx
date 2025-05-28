@@ -4,6 +4,7 @@ import { useNavigate, useSearch, useRouterState } from "@tanstack/react-router";
 import { Card } from "@heroui/react";
 import Button from "../../../shared/components/Button"; // Import Button
 import { useAuth } from "../../../shared/hooks"; // Added import for useAuth
+import { authService } from "../../../shared/services/authService"; // Import authService
 // Assuming you might want a Google icon, e.g., from heroicons
 // import { DeviceTabletIcon } from "@heroicons/react/24/outline"; // Placeholder for a Google-like icon
 
@@ -62,13 +63,13 @@ const LoginPage: React.FC = () => {
           }
 
           const userInfo = await userInfoResponse.json();
-
           const loggedInUser: User = {
             id: userInfo.sub,
             email: userInfo.email,
             name: userInfo.name,
             picture: userInfo.picture,
-          };
+          }; // Save the access token using authService
+          authService.setAccessToken(tokenResponse.access_token);
 
           // Pass the fetched user object directly to the login function
           authContext.login(loggedInUser);

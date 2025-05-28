@@ -131,6 +131,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({ handleBack }) => {
     }
   };
   const handleNextWithValidation = async () => {
+    // return await submitForm();
     setIsValidating(true);
     try {
       // Mark all fields for step 6 as touched to trigger validation

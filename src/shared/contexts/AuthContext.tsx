@@ -5,6 +5,7 @@ import React, {
   type ReactNode,
 } from "react";
 import { GoogleOAuthProvider, googleLogout } from "@react-oauth/google";
+import { authService } from "../services/authService";
 
 // Define what user information you want to store
 interface User {
@@ -42,16 +43,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const storedToken = authService.getAccessToken();
+
+    if (storedUser && storedToken) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
         console.error("Failed to parse stored user:", e);
-        localStorage.removeItem("user");
-        localStorage.removeItem("isAuthenticated");
+        // Clear all auth data if user data is corrupted
+        authService.handleLogout();
       }
+    } else if (storedUser || storedToken) {
+      // If we have one but not the other, clear everything
+      console.warn("Inconsistent auth state detected, clearing all auth data");
+      authService.handleLogout();
     }
     setIsLoading(false);
+
+    // Listen for logout events from the auth service
+    const handleLogoutEvent = () => {
+      setUser(null);
+      setIsLoading(false);
+    };
+
+    window.addEventListener("auth:logout", handleLogoutEvent);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener("auth:logout", handleLogoutEvent);
+    };
   }, []);
 
   const login = (loggedInUser: User) => {
@@ -72,13 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     }
   };
-
   const logout = () => {
     googleLogout(); // Clears Google's session
-    setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("isAuthenticated"); // For router placeholder
-    console.log("User logged out");
+    authService.handleLogout(); // Use authService to handle logout
   };
 
   const isAuthenticated = !!user;

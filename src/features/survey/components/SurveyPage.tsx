@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Step, SurveyFormData, SurveyScore } from "./types";
 import type { FormikHelpers } from "formik";
 import { Form, Formik } from "formik";
@@ -66,9 +66,13 @@ const SurveyPage: React.FC = () => {
   // State for steps
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [isSurveyComplete, setIsSurveyComplete] = useState(false); // Added state for survey completion
-
   // Track the current step index (0-based)
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+
+  // Reset survey completion status when survey page loads
+  useEffect(() => {
+    localStorage.setItem("isComplete", "false");
+  }, []);
 
   // State for current score
   const [currentScore, setCurrentScore] = useState<SurveyScore>({
@@ -245,11 +249,13 @@ const SurveyPage: React.FC = () => {
                     </div>
                   </div>
                 </main>
-              </div>
+              </div>{" "}
               <SurveyCompletionPopup
                 isOpen={isSurveyComplete}
                 onClose={() => {
                   setIsSurveyComplete(false);
+                  // Save completion state to localStorage
+                  localStorage.setItem("isComplete", "true");
                   // Navigate to the analysis page with the score
                   navigate({
                     to: "/survey/analysis/$score",

@@ -119,7 +119,7 @@ const Button = ({
   return (
     <HeroButton
       className={combinedClasses}
-      onClick={props.onPress || props.onClick}
+      onPress={props.onPress || props.onClick}
       {...props}
     >
       {children}

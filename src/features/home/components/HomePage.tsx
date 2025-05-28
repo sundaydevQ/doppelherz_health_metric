@@ -215,9 +215,9 @@ const HomePage: React.FC = () => {
       {/* Desktop View (≥ 1024px) */}
       <div className="hidden lg:block min-h-screen bg-gradient-to-br from-white to-[#f7f5ff]">
         {/* Hero section - Improved responsive sizing */}
-        <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 gap-8 lg:gap-12">
-          {/* Left content */}
-          <BackgroundBeamsWithCollision>
+        <BackgroundBeamsWithCollision>
+          <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 gap-8 lg:gap-12">
+            {/* Left content */}
             <div className="lg:w-1/2 lg:pr-4">
               <h1
                 style={{ letterSpacing: "0.05em", lineHeight: "1.2" }}
@@ -259,18 +259,19 @@ const HomePage: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </BackgroundBeamsWithCollision>
-          {/* Right image - Responsive sizing */}
-          <div className="lg:w-1/2 flex justify-center">
-            <div className="rounded-3xl w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] xl:w-[400px] xl:h-[400px] bg-gradient-to-b from-[#8c62e3] to-[#6942af] flex items-center justify-center shadow-xl">
-              <img
-                src="src/assets/images/doctor.png"
-                alt="Doctor illustration"
-                className="w-4/5 h-4/5 object-contain"
-              />
+
+            {/* Right image - Responsive sizing */}
+            <div className="lg:w-1/2 flex justify-center">
+              <div className="rounded-3xl w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] xl:w-[400px] xl:h-[400px] bg-gradient-to-b from-[#8c62e3] to-[#6942af] flex items-center justify-center shadow-xl z-50">
+                <img
+                  src="src/assets/images/doctor.png"
+                  alt="Doctor illustration"
+                  className="w-4/5 h-4/5 object-contain"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </BackgroundBeamsWithCollision>
 
         {/* Features section - Responsive padding and sizing */}
         <div className="bg-white py-12 lg:py-24">

@@ -1,4 +1,4 @@
-import { RootRoute, Route, Router } from "@tanstack/react-router";
+import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 
 // Import your page components using barrel files
 import { RootLayout } from "./shared/layouts";
@@ -45,6 +45,18 @@ const surveyAnalysisRoute = new Route({
     return {
       score: search.score as number | undefined,
     };
+  },
+  beforeLoad: () => {
+    // Check if survey is completed in localStorage
+    const isComplete = localStorage.getItem("isComplete");
+
+    if (isComplete !== "true") {
+      // If survey is not completed, redirect to survey page
+      throw redirect({
+        to: "/survey",
+        replace: true,
+      });
+    }
   },
   component: SurveyAnalysisPage,
 });

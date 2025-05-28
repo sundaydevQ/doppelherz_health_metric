@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { Button } from "../../../shared";
 
 interface AnalysisItem {
@@ -93,12 +94,12 @@ const getHealthSuggestionsByScore = (score: number) => {
       {
         icon: <MoonIcon />,
         text: "Duy trì lối sống lành mạnh: sinh hoạt nghỉ ngơi điều độ (ngủ 7-8 tiếng/ ngày)",
-        bgColor: "bg-green-200",
+        bgColor: "bg-yellow-200",
       },
       {
         icon: <HeartIcon />,
         text: "Bổ sung dinh dưỡng cân bằng, tập luyện thể dục 3-5 lần/ tuần, khám sức khỏe định kỳ đều đặn",
-        bgColor: "bg-green-200",
+        bgColor: "bg-red-200",
       },
     ];
   } else if (score >= 65) {
@@ -106,7 +107,7 @@ const getHealthSuggestionsByScore = (score: number) => {
       {
         icon: <span className="text-xl">🥗</span>,
         text: "Bổ sung các thực phẩm giàu isoflavone, các vitamin đặc biệt nhóm B,E",
-        bgColor: "bg-yellow-200",
+        bgColor: "bg-green-200",
       },
       {
         icon: <MoonIcon />,
@@ -116,7 +117,7 @@ const getHealthSuggestionsByScore = (score: number) => {
       {
         icon: <span className="text-xl">🚫</span>,
         text: "Hạn chế các chất kích thích như café, rượu bia, thuốc lá",
-        bgColor: "bg-yellow-200",
+        bgColor: "bg-red-200",
       },
     ];
   } else if (score >= 40) {
@@ -129,12 +130,12 @@ const getHealthSuggestionsByScore = (score: number) => {
       {
         icon: <span className="text-xl">🔄</span>,
         text: "Thay đổi lối sống lành mạnh",
-        bgColor: "bg-orange-200",
+        bgColor: "bg-blue-200",
       },
       {
         icon: <span className="text-xl">👨‍⚕️</span>,
         text: "Khám sức khỏe định kỳ và lắng nghe tư vấn từ bác sĩ, dược sĩ",
-        bgColor: "bg-orange-200",
+        bgColor: "bg-gray-200",
       },
     ];
   } else {
@@ -142,12 +143,12 @@ const getHealthSuggestionsByScore = (score: number) => {
       {
         icon: <span className="text-xl">📋</span>,
         text: "Cần lập kế hoạch chăm sóc chuyên sâu",
-        bgColor: "bg-red-200",
+        bgColor: "bg-gray-200",
       },
       {
         icon: <span className="text-xl">🏥</span>,
         text: "Nếu đã mãn kinh hoặc cắt buồng trứng, hãy tham khảo bác sĩ nội tiết/sản phụ khoa để có giải pháp chăm sóc phù hợp nhất",
-        bgColor: "bg-red-200",
+        bgColor: "bg-gray-200",
       },
     ];
   }
@@ -166,6 +167,30 @@ const SurveyAnalysisPage: React.FC = () => {
   const { score } = useParams({ from: "/survey/analysis/$score" });
   const navigate = useNavigate();
   const numericScore = score; // Already a number due to parseParams in router
+  const [animatedScore, setAnimatedScore] = useState(0);
+
+  // Animate score counting up
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const interval = setInterval(() => {
+        setAnimatedScore((prev) => {
+          const increment = Math.ceil((numericScore - prev) / 10);
+          if (prev + increment >= numericScore) {
+            clearInterval(interval);
+            return numericScore;
+          }
+          return prev + increment;
+        });
+      }, 50);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [numericScore]);
+  useEffect(() => {
+    return () => {
+      localStorage.setItem("isComplete", "false");
+    };
+  }, []);
 
   if (numericScore === undefined || isNaN(numericScore)) {
     return (
@@ -189,7 +214,7 @@ const SurveyAnalysisPage: React.FC = () => {
 
   // Main page content starts here
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 pb-20">
+    <div className="min-h-screen bg-gray-50 text-gray-800 pb-20 xl:px-64 lg:px-32 sm:px-16 px-0">
       {/* Header */}
       <header className="p-4 flex items-center sticky top-0 bg-gray-50 z-10 shadow-sm">
         <h1 className="text-xl font-semibold text-gray-700 ml-4">
@@ -202,10 +227,78 @@ const SurveyAnalysisPage: React.FC = () => {
       </header>
 
       <main className="p-4 sm:p-6 space-y-8">
+        {" "}
         {/* Main Score Display */}
-        <section className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg">
+        <motion.section
+          className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-            <svg className="w-full h-full" viewBox="0 0 100 100">
+            {/* Outer glow effect */}
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `conic-gradient(from 0deg, transparent, ${
+                  numericScore >= 85
+                    ? "#10b981"
+                    : numericScore >= 65
+                    ? "#f59e0b"
+                    : numericScore >= 40
+                    ? "#f97316"
+                    : "#ef4444"
+                }20, transparent)`,
+                filter: "blur(20px)",
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            />
+
+            <svg className="w-full h-full relative z-10" viewBox="0 0 100 100">
+              {/* Gradient definitions */}
+              <defs>
+                <linearGradient
+                  id="progressGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor={
+                      numericScore >= 85
+                        ? "#10b981"
+                        : numericScore >= 65
+                        ? "#f59e0b"
+                        : numericScore >= 40
+                        ? "#f97316"
+                        : "#ef4444"
+                    }
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={
+                      numericScore >= 85
+                        ? "#059669"
+                        : numericScore >= 65
+                        ? "#d97706"
+                        : numericScore >= 40
+                        ? "#ea580c"
+                        : "#dc2626"
+                    }
+                  />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
               {/* Background circle */}
               <circle
                 cx="50"
@@ -215,56 +308,144 @@ const SurveyAnalysisPage: React.FC = () => {
                 stroke="#e6e6e6"
                 strokeWidth="8"
               />
-              {/* Progress arc - static for now, representing the score */}
-              <circle
+
+              {/* Animated progress arc */}
+              <motion.circle
                 cx="50"
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="#ff9f00" // Orange color from image
+                stroke="url(#progressGradient)"
                 strokeWidth="8"
-                strokeDasharray={`${(numericScore / 100) * 2 * Math.PI * 45} ${
-                  2 * Math.PI * 45
-                }`}
                 strokeLinecap="round"
                 transform="rotate(-90 50 50)"
+                filter="url(#glow)"
+                initial={{ strokeDasharray: `0 ${2 * Math.PI * 45}` }}
+                animate={{
+                  strokeDasharray: `${
+                    (numericScore / 100) * 2 * Math.PI * 45
+                  } ${2 * Math.PI * 45}`,
+                }}
+                transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
+              />
+
+              {/* Pulse effect at progress end */}
+              <motion.circle
+                cx="50"
+                cy="5" // Top of circle (after rotation)
+                r="3"
+                fill={
+                  numericScore >= 85
+                    ? "#10b981"
+                    : numericScore >= 65
+                    ? "#f59e0b"
+                    : numericScore >= 40
+                    ? "#f97316"
+                    : "#ef4444"
+                }
+                transform={`rotate(${(numericScore / 100) * 360 - 90} 50 50)`}
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [1, 0.7, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2.5,
+                }}
               />
             </svg>
+
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl sm:text-5xl font-bold text-orange-500 mt-1">
-                {numericScore}
-              </span>
+              <motion.span
+                className={`text-4xl sm:text-5xl font-bold mt-1 ${
+                  numericScore >= 85
+                    ? "text-green-500"
+                    : numericScore >= 65
+                    ? "text-yellow-500"
+                    : numericScore >= 40
+                    ? "text-orange-500"
+                    : "text-red-500"
+                }`}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1 }}
+              >
+                {animatedScore}
+              </motion.span>
+              <motion.div
+                className="w-8 h-1 bg-gray-300 rounded-full mt-2"
+                initial={{ width: 0 }}
+                animate={{ width: "2rem" }}
+                transition={{ duration: 0.8, delay: 1.5 }}
+              />
             </div>
           </div>
-        </section>
+        </motion.section>{" "}
         {/* Goal Banner - Dynamic based on score */}
-        <section
+        <motion.section
           className={`p-3 ${bannerContent.bgColor} ${bannerContent.textColor} rounded-lg flex items-center justify-center shadow`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
         >
-          {bannerContent.icon}
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, -5, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          >
+            {bannerContent.icon}
+          </motion.div>
           <p className="ml-2 text-sm font-medium">{bannerContent.message}</p>
-        </section>{" "}
+        </motion.section>{" "}
         {/* Health Suggestions - Dynamic based on score */}
-        <section className="p-6 bg-white rounded-xl shadow-lg">
+        <motion.section
+          className="p-6 bg-white rounded-xl shadow-lg"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 2 }}
+        >
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
             Lời khuyên từ chuyên gia chăm sóc sức khỏe
           </h2>
           <div className="space-y-4">
             {healthSuggestions.map((suggestion, index) => (
-              <div
+              <motion.div
                 key={index}
                 className="flex items-center p-3 bg-gray-50 rounded-lg"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 2.3 + index * 0.2,
+                }}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                }}
               >
-                <div className={`p-2 ${suggestion.bgColor} rounded-full`}>
+                <motion.div
+                  className={`p-2 ${suggestion.bgColor} rounded-full`}
+                  whileHover={{ scale: 1.1, rotate: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
                   {suggestion.icon}
-                </div>
+                </motion.div>
                 <div className="ml-3 flex-grow">
                   <p className="font-normal">{suggestion.text}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
         {/* Error case for no analysis found (should be handled earlier, but as a fallback) */}
         {!analysis && (
           <div className="flex flex-col items-center justify-center text-center p-6 bg-white rounded-xl shadow-lg">
@@ -281,9 +462,9 @@ const SurveyAnalysisPage: React.FC = () => {
           <Button
             onPress={() => navigate({ to: "/" })}
             variant="solid"
-            className="w-auto px-6 py-2.5"
+            className="w-auto py-2.5"
           >
-            Kết thúc
+            Hoàn thành
           </Button>
         </div>
       </main>

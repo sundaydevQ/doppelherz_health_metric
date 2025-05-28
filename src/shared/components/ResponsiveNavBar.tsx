@@ -17,6 +17,9 @@ const ResizableResponsiveNavBar: React.FC = () => {
   const navigate = useNavigate();
   const matchLogin = useMatchRoute()({ to: "/login" });
   const matchSurvey = useMatchRoute()({ to: "/survey" });
+  const matchSurveyAnalysis = useMatchRoute()({
+    to: "/survey/analysis/$score",
+  });
 
   // Function to handle scrolling to features section
   const scrollToFeatures = useCallback(async () => {
@@ -68,9 +71,8 @@ const ResizableResponsiveNavBar: React.FC = () => {
       external: true,
     },
   ];
-
   const menuItems =
-    matchLogin || matchSurvey
+    matchLogin || matchSurvey || matchSurveyAnalysis
       ? menuItemsRaw.filter(
           (item) =>
             item.name !== "Bài kiểm tra" &&
@@ -85,9 +87,8 @@ const ResizableResponsiveNavBar: React.FC = () => {
   return (
     <Navbar>
       <NavBody>
-        <NavbarLogo />
-        <NavItems items={menuItems} />
-        {!(matchLogin || matchSurvey) && (
+        <NavbarLogo /> <NavItems items={menuItems} />
+        {!(matchLogin || matchSurvey || matchSurveyAnalysis) && (
           <Button onPress={handleNavigateToLogin} variant="bordered">
             Bắt đầu ngay
           </Button>
@@ -129,7 +130,7 @@ const ResizableResponsiveNavBar: React.FC = () => {
               </Link>
             )
           )}
-          {!(matchLogin || matchSurvey) && (
+          {!(matchLogin || matchSurvey || matchSurveyAnalysis) && (
             <Button onPress={handleNavigateToLogin} className="w-full mt-2">
               Bắt đầu ngay
             </Button>

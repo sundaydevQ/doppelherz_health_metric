@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:sit": "vite --mode sit --open",
-    "build": "tsc -b && vite build",
+    "build:sit": "tsc -b && vite build --mode sit",
     "lint": "eslint .",
     "preview": "vite preview"
   },

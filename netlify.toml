@@ -1,0 +1,9 @@
+[build]
+    command = "npm run build:sit"
+    publish = "/dist"
+    base = "/"
+
+[[redirect]]
+ from = "/*"
+ to = "/index.html"
+ status = 200

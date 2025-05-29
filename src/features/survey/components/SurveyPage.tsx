@@ -17,6 +17,8 @@ import { INITIAL_SCORE } from "./scoringConfig";
 import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
 import { addSurveyData } from "../../../shared";
 
+const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEET_ID;
+
 // Initial steps data
 const initialSteps: Step[] = [
   { id: "01", name: "Thông tin cơ bản", status: "current" },
@@ -237,9 +239,6 @@ const SurveyPage: React.FC = () => {
     try {
       const body = filterFormDataWithPriority(values);
       if (body) {
-        console.log("body", body);
-        const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEET_ID;
-
         await addSurveyData(spreadsheetId, body);
         actions.setSubmitting(false);
         setIsSurveyComplete(true); // Set survey completion state

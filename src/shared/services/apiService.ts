@@ -159,8 +159,6 @@ export async function addSurveyData(
   spreadsheetId: string,
   body: Array<string | number | boolean>
 ): Promise<ApiResponse<unknown>> {
-  console.log("spreadsheetId", spreadsheetId);
-
   return request(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Data!A:A:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
     "POST",

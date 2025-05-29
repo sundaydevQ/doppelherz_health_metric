@@ -17,7 +17,7 @@ import { INITIAL_SCORE } from "./scoringConfig";
 import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
 import { addSurveyData } from "../../../shared";
 
-const spreadsheetId =
+const GOOGLE_SHEET_ID =
   import.meta.env.VITE_GOOGLE_SHEET_ID || "your-google-sheet-id"; // Replace with your actual Google Sheet ID
 
 // Initial steps data
@@ -240,7 +240,7 @@ const SurveyPage: React.FC = () => {
     try {
       const body = filterFormDataWithPriority(values);
       if (body) {
-        await addSurveyData(spreadsheetId, body);
+        await addSurveyData(GOOGLE_SHEET_ID, body);
         actions.setSubmitting(false);
         setIsSurveyComplete(true); // Set survey completion state
       }

@@ -18,7 +18,8 @@ import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
 import { addSurveyData } from "../../../shared";
 
 const GOOGLE_SHEET_ID =
-  import.meta.env.VITE_GOOGLE_SHEET_ID || "your-google-sheet-id"; // Replace with your actual Google Sheet ID
+  import.meta.env.VITE_GOOGLE_SHEET_ID ||
+  "1JYsiDYgTTGYNq4S_y3uPDaEr1uM10TFlJO-AnBDdqV0"; // Replace with your actual Google Sheet ID
 
 // Initial steps data
 const initialSteps: Step[] = [

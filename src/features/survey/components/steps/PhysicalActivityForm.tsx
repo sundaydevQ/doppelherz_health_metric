@@ -16,50 +16,59 @@ export interface PhysicalActivityFormProps {
 
 const riskFactorsOptions = [
   {
-    value: "earlyHysterectomyOrOophorectomy",
+    value: "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)",
     label: "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)",
     points: getPointDeduction(
       "step5.riskFactors",
-      "earlyHysterectomyOrOophorectomy"
+      "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)"
     ),
   },
   {
-    value: "menopause",
+    value: "Mãn kinh (12 tháng không có kinh)",
     label: "Mãn kinh (12 tháng không có kinh)",
-    points: getPointDeduction("step5.riskFactors", "menopause"),
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "Mãn kinh (12 tháng không có kinh)"
+    ),
   },
   {
-    value: "nightShiftsOrChronicSleepDeprivation",
+    value: "Làm việc ca đêm, thiếu ngủ thường xuyên",
     label: "Làm việc ca đêm, thiếu ngủ thường xuyên",
     points: getPointDeduction(
       "step5.riskFactors",
-      "nightShiftsOrChronicSleepDeprivation"
+      "Làm việc ca đêm, thiếu ngủ thường xuyên"
     ),
   },
   {
-    value: "chronicStress",
+    value: "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình",
     label: "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình",
-    points: getPointDeduction("step5.riskFactors", "chronicStress"),
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình"
+    ),
   },
   {
-    value: "extremeDietingOrRapidWeightLoss",
+    value: "Ăn kiêng cực đoan, sụt cân nhanh",
     label: "Ăn kiêng cực đoan, sụt cân nhanh",
     points: getPointDeduction(
       "step5.riskFactors",
-      "extremeDietingOrRapidWeightLoss"
+      "Ăn kiêng cực đoan, sụt cân nhanh"
     ),
   },
   {
-    value: "sedentaryLifestyle",
+    value: "Không vận động thể chất thường xuyên",
     label: "Không vận động thể chất thường xuyên",
-    points: getPointDeduction("step5.riskFactors", "sedentaryLifestyle"),
+    points: getPointDeduction(
+      "step5.riskFactors",
+      "Không vận động thể chất thường xuyên"
+    ),
   },
   {
-    value: "smokingOrRegularAlcoholConsumption",
+    value: "Hút thuốc lá hoặc uống rượu thường xuyên",
     label: "Hút thuốc lá hoặc uống rượu thường xuyên",
     points: getPointDeduction(
       "step5.riskFactors",
-      "smokingOrRegularAlcoholConsumption"
+      "Hút thuốc lá hoặc uống rượu thường xuyên"
     ),
   },
   {

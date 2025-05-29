@@ -55,9 +55,9 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
   };
 
   const genderOptions = [
-    { value: "male", label: "Nam" },
-    { value: "female", label: "Nữ" },
-    { value: "other", label: "Khác" },
+    { value: "Nam", label: "Nam" },
+    { value: "Nữ", label: "Nữ" },
+    { value: "Khác", label: "Khác" },
   ];
 
   return (

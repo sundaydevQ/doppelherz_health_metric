@@ -148,7 +148,7 @@ const SurveyPage: React.FC = () => {
   const handleCompleted = () => {
     setIsSurveyComplete(false); // Reset survey completion state
     localStorage.setItem("isCompleteSurvey", "true"); // Mark survey as complete in localStorage
-    window.location.href = "/survey/analysis"; // Redirect to analysis page
+    window.location.href = `/survey/analysis/${currentScore.currentScore}`; // Redirect to analysis page
   };
 
   const filterFormDataWithPriority = (values: SurveyFormData): string[] => {

@@ -4,61 +4,61 @@ import type { ScoringConfig } from "./types";
 export const SCORING_CONFIG: ScoringConfig = {
   // Step 2: Age - points to deduct based on age ranges
   "step2.age": {
-    under30: 0, // Dưới 30 tuổi
-    "30-34": 3, // 30 - 34 tuổi
-    "35-39": 7, // 35 - 39 tuổi
-    "40-44": 12, // 40 - 44 tuổi
-    "45-49": 20, // 45 - 49 tuổi
-    "50-54": 30, // 50 - 54 tuổi
-    "55plus": 40, // Từ 55 tuổi trở lên
+    "Dưới 30 tuổi": 0, // Dưới 30 tuổi
+    "30 - 34 tuổi": 3, // 30 - 34 tuổi
+    "35 - 39 tuổi": 7, // 35 - 39 tuổi
+    "40 - 44 tuổi": 12, // 40 - 44 tuổi
+    "45 - 49 tuổi": 20, // 45 - 49 tuổi
+    "50 - 54 tuổi": 30, // 50 - 54 tuổi
+    "55 tuổi trở lên": 40, // Từ 55 tuổi trở lên
   },
   // Step 3: Physical Signs - each symptom deducts points
   "step3.physicalSigns": {
-    menstrualDisorders: 10,
-    hotFlashesNightSweats: 10,
-    vaginalDrynessPainfulIntercourse: 10,
-    decreasedLibido: 7,
-    prolongedUnexplainedFatigue: 5,
-    hairLossDrySkin: 5,
-    abdominalWeightGain: 5,
+    "Rối loạn kinh nguyệt (chu kỳ không đều, kéo dài, vô kinh, ra ít, ...)": 10,
+    "Bốc hỏa, đổ mồ hôi đêm": 10,
+    "Khô âm đạo, đau khi quan hệ": 10,
+    "Giảm ham muốn tình dục": 7,
+    "Mệt mỏi kéo dài không rõ nguyên nhân": 5,
+    "Rụng tóc, da khô hơn rõ rệt": 5,
+    "Tăng cân vùng bụng dù không ăn nhiều": 5,
     "Bình thường": 0,
-    other: 5,
+    Khác: 5,
   },
 
   // Step 4: Psychological Signs - mental health impacts score
   "step4.psychologicalSigns": {
-    sleepProblems: 5,
-    moodSwings: 5,
-    memoryConcentration: 5,
-    anxiety: 5,
+    "Khó ngủ, mất ngủ, ngủ không sâu giấc": 5,
+    "Tâm trạng thất thường, dễ cáu gắt": 5,
+    "Giảm trí nhớ ngắn hạn, khó tập trung": 5,
+    "Lo âu vô cớ": 5,
     "Bình thường": 0,
-    other: 5,
+    Khác: 5,
   },
 
   // Step 5: Risk Factors - existing conditions are serious
   "step5.riskFactors": {
-    earlyHysterectomyOrOophorectomy: 20,
-    menopause: 30,
-    nightShiftsOrChronicSleepDeprivation: 5,
-    chronicStress: 5,
-    extremeDietingOrRapidWeightLoss: 5,
-    sedentaryLifestyle: 3,
-    smokingOrRegularAlcoholConsumption: 5,
+    "Cắt tử cung hoặc buồng trứng sớm (< 45 tuổi)": 20,
+    "Mãn kinh (12 tháng không có kinh)": 30,
+    "Làm việc ca đêm, thiếu ngủ thường xuyên": 5,
+    "Căng thẳng mạn tính hoặc stress vì công việc, cuộc sống, gia đình": 5,
+    "Ăn kiêng cực đoan, sụt cân nhanh": 5,
+    "Không vận động thể chất thường xuyên": 3,
+    "Hút thuốc lá hoặc uống rượu thường xuyên": 5,
     "Bình thường": 0,
-    other: 5,
+    Khác: 5,
   },
 
   // Step 6: Medications - some medications indicate health issues
   "step6.medications": {
-    combinedHormonalContraceptives: 2,
-    corticosteroids: 3,
-    cancerTreatmentMeds: 10,
-    antidepressantsAntipsychotics: 2,
-    thyroidMeds: 2,
-    fertilityMeds: 2,
-    anticonvulsants: 3,
+    "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)": 2,
+    "Các thuốc corticoid (Prednisolone, Dexamethasone...)": 3,
+    "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)": 10,
+    "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)": 2,
+    "Thuốc điều trị cường giáp hoặc suy giáp": 2,
+    "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản": 2,
+    "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)": 3,
     "Không sử dụng": 0,
-    other: 5,
+    Khác: 5,
   },
 };
 

@@ -13,27 +13,33 @@ export interface DietAssessmentFormProps {
 
 const psychologicalSignsOptions = [
   {
-    value: "sleepProblems",
+    value: "Khó ngủ, mất ngủ, ngủ không sâu giấc",
     label: "Khó ngủ, mất ngủ, ngủ không sâu giấc",
-    points: getPointDeduction("step4.psychologicalSigns", "sleepProblems"),
-  },
-  {
-    value: "moodSwings",
-    label: "Tâm trạng thất thường, dễ cáu gắt",
-    points: getPointDeduction("step4.psychologicalSigns", "moodSwings"),
-  },
-  {
-    value: "memoryConcentration",
-    label: "Giảm trí nhớ ngắn hạn, khó tập trung",
     points: getPointDeduction(
       "step4.psychologicalSigns",
-      "memoryConcentration"
+      "Khó ngủ, mất ngủ, ngủ không sâu giấc"
     ),
   },
   {
-    value: "anxiety",
+    value: "Tâm trạng thất thường, dễ cáu gắt",
+    label: "Tâm trạng thất thường, dễ cáu gắt",
+    points: getPointDeduction(
+      "step4.psychologicalSigns",
+      "Tâm trạng thất thường, dễ cáu gắt"
+    ),
+  },
+  {
+    value: "Giảm trí nhớ ngắn hạn, khó tập trung",
+    label: "Giảm trí nhớ ngắn hạn, khó tập trung",
+    points: getPointDeduction(
+      "step4.psychologicalSigns",
+      "Giảm trí nhớ ngắn hạn, khó tập trung"
+    ),
+  },
+  {
+    value: "Lo âu vô cớ",
     label: "Cảm giác lo âu vô cớ",
-    points: getPointDeduction("step4.psychologicalSigns", "anxiety"),
+    points: getPointDeduction("step4.psychologicalSigns", "Lo âu vô cớ"),
   },
   {
     value: "Bình thường",
@@ -43,7 +49,7 @@ const psychologicalSignsOptions = [
   {
     value: "Khác",
     label: "Khác",
-    points: getPointDeduction("step4.psychologicalSigns", "other"),
+    points: getPointDeduction("step4.psychologicalSigns", "Khác"),
   },
 ];
 

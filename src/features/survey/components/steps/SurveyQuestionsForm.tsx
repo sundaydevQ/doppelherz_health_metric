@@ -13,46 +13,46 @@ export interface SurveyQuestionsFormProps {
 // Define ageOptions as requested
 const ageOptions = [
   {
-    value: "under30",
+    value: "Dưới 30 tuổi",
     label: "Dưới 30 tuổi",
     score: -0,
-    points: getPointDeduction("step2.age", "under30"),
+    points: getPointDeduction("step2.age", "Dưới 30 tuổi"),
   },
   {
-    value: "30-34",
+    value: "30 - 34 tuổi",
     label: "30 - 34 tuổi",
     score: -3,
-    points: getPointDeduction("step2.age", "30-34"),
+    points: getPointDeduction("step2.age", "30 - 34 tuổi"),
   },
   {
-    value: "35-39",
+    value: "35 - 39 tuổi",
     label: "35 - 39 tuổi",
     score: -7,
-    points: getPointDeduction("step2.age", "35-39"),
+    points: getPointDeduction("step2.age", "35 - 39 tuổi"),
   },
   {
-    value: "40-44",
+    value: "40 - 44 tuổi",
     label: "40 - 44 tuổi",
     score: -12,
-    points: getPointDeduction("step2.age", "40-44"),
+    points: getPointDeduction("step2.age", "40 - 44 tuổi"),
   },
   {
-    value: "45-49",
+    value: "45 - 49 tuổi",
     label: "45 - 49 tuổi",
     score: -20,
-    points: getPointDeduction("step2.age", "45-49"),
+    points: getPointDeduction("step2.age", "45 - 49 tuổi"),
   },
   {
-    value: "50-54",
+    value: "50 - 54 tuổi",
     label: "50 - 54 tuổi",
     score: -30,
-    points: getPointDeduction("step2.age", "50-54"),
+    points: getPointDeduction("step2.age", "50 - 54 tuổi"),
   },
   {
-    value: "55plus",
+    value: "55 tuổi trở lên",
     label: "Từ 55 tuổi trở lên",
     score: -40,
-    points: getPointDeduction("step2.age", "55plus"),
+    points: getPointDeduction("step2.age", "55 tuổi trở lên"),
   },
 ];
 

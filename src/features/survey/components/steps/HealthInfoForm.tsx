@@ -16,46 +16,56 @@ export interface HealthInfoFormProps {
 
 const physicalSignsOptions = [
   {
-    value: "menstrualDisorders",
+    value:
+      "Rối loạn kinh nguyệt (chu kỳ không đều, kéo dài, vô kinh, ra ít, ...)",
     label:
       "Rối loạn kinh nguyệt (chu kỳ không đều, kéo dài, vô kinh, ra ít, ...)",
-    points: getPointDeduction("step3.physicalSigns", "menstrualDisorders"),
+    points: getPointDeduction(
+      "step3.physicalSigns",
+      "Rối loạn kinh nguyệt (chu kỳ không đều, kéo dài, vô kinh, ra ít, ...)"
+    ),
   },
   {
-    value: "hotFlashesNightSweats",
+    value: "Bốc hỏa, đổ mồ hôi đêm",
     label: "Bốc hỏa, đổ mồ hôi đêm",
-    points: getPointDeduction("step3.physicalSigns", "hotFlashesNightSweats"),
+    points: getPointDeduction("step3.physicalSigns", "Bốc hỏa, đổ mồ hôi đêm"),
   },
   {
-    value: "vaginalDrynessPainfulIntercourse",
+    value: "Khô âm đạo, đau khi quan hệ",
     label: "Khô âm đạo, đau khi quan hệ",
     points: getPointDeduction(
       "step3.physicalSigns",
-      "vaginalDrynessPainfulIntercourse"
+      "Khô âm đạo, đau khi quan hệ"
     ),
   },
   {
-    value: "decreasedLibido",
+    value: "Giảm ham muốn tình dục",
     label: "Giảm ham muốn tình dục",
-    points: getPointDeduction("step3.physicalSigns", "decreasedLibido"),
+    points: getPointDeduction("step3.physicalSigns", "Giảm ham muốn tình dục"),
   },
   {
-    value: "prolongedUnexplainedFatigue",
+    value: "Mệt mỏi kéo dài không rõ nguyên nhân",
     label: "Mệt mỏi kéo dài không rõ nguyên nhân",
     points: getPointDeduction(
       "step3.physicalSigns",
-      "prolongedUnexplainedFatigue"
+      "Mệt mỏi kéo dài không rõ nguyên nhân"
     ),
   },
   {
-    value: "hairLossDrySkin",
+    value: "Rụng tóc, da khô hơn rõ rệt",
     label: "Rụng tóc, da khô hơn rõ rệt",
-    points: getPointDeduction("step3.physicalSigns", "hairLossDrySkin"),
+    points: getPointDeduction(
+      "step3.physicalSigns",
+      "Rụng tóc, da khô hơn rõ rệt"
+    ),
   },
   {
-    value: "abdominalWeightGain",
+    value: "Tăng cân vùng bụng dù không ăn nhiều",
     label: "Tăng cân vùng bụng dù không ăn nhiều",
-    points: getPointDeduction("step3.physicalSigns", "abdominalWeightGain"),
+    points: getPointDeduction(
+      "step3.physicalSigns",
+      "Tăng cân vùng bụng dù không ăn nhiều"
+    ),
   },
   {
     value: "Bình thường",

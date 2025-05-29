@@ -14,6 +14,7 @@ import {
 } from "../../../shared/components";
 import Carousel from "../../../shared/components/Carousel";
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react"; // Removed Typography, assuming it's not a direct export or will be handled by standard HTML tags
+import DoctorImage from "../../../assets/images/doctor.png"; // Importing the doctor image directly
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -264,7 +265,7 @@ const HomePage: React.FC = () => {
             <div className="lg:w-1/2 flex justify-center">
               <div className="rounded-3xl w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] xl:w-[400px] xl:h-[400px] bg-gradient-to-b from-[#8c62e3] to-[#6942af] flex items-center justify-center shadow-xl z-50">
                 <img
-                  src="src/assets/images/doctor.png"
+                  src={DoctorImage}
                   alt="Doctor illustration"
                   className="w-4/5 h-4/5 object-contain"
                 />

@@ -15,45 +15,60 @@ export interface MedicationFormProps {
 
 const medicationOptions = [
   {
-    value: "combinedHormonalContraceptives",
+    value: "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)",
     label: "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)",
     points: getPointDeduction(
       "step6.medications",
-      "combinedHormonalContraceptives"
+      "Thuốc tránh thai nội tiết kết hợp (dùng liên tục từ 2 năm trở lên)"
     ),
   },
   {
-    value: "corticosteroids",
+    value: "Các thuốc corticoid (Prednisolone, Dexamethasone...)",
     label: "Các thuốc corticoid (Prednisolone, Dexamethasone...)",
-    points: getPointDeduction("step6.medications", "corticosteroids"),
+    points: getPointDeduction(
+      "step6.medications",
+      "Các thuốc corticoid (Prednisolone, Dexamethasone...)"
+    ),
   },
   {
-    value: "cancerTreatmentMeds",
+    value: "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)",
     label: "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)",
-    points: getPointDeduction("step6.medications", "cancerTreatmentMeds"),
+    points: getPointDeduction(
+      "step6.medications",
+      "Thuốc điều trị ung thư (hóa xạ trị, kháng hormone...)"
+    ),
   },
   {
-    value: "antidepressantsAntipsychotics",
+    value: "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)",
     label: "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)",
     points: getPointDeduction(
       "step6.medications",
-      "antidepressantsAntipsychotics"
+      "Thuốc chống trầm cảm hoặc an thần kinh (SSRI, antipsychotics)"
     ),
   },
   {
-    value: "thyroidMeds",
+    value: "Thuốc điều trị cường giáp hoặc suy giáp",
     label: "Thuốc điều trị cường giáp hoặc suy giáp",
-    points: getPointDeduction("step6.medications", "thyroidMeds"),
+    points: getPointDeduction(
+      "step6.medications",
+      "Thuốc điều trị cường giáp hoặc suy giáp"
+    ),
   },
   {
-    value: "fertilityMeds",
+    value: "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản",
     label: "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản",
-    points: getPointDeduction("step6.medications", "fertilityMeds"),
+    points: getPointDeduction(
+      "step6.medications",
+      "Sử dụng thuốc điều trị hiếm muộn / hỗ trợ sinh sản"
+    ),
   },
   {
-    value: "anticonvulsants",
+    value: "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)",
     label: "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)",
-    points: getPointDeduction("step6.medications", "anticonvulsants"),
+    points: getPointDeduction(
+      "step6.medications",
+      "Sử dụng thuốc chống co giật (như phenytoin, carbamazepin)"
+    ),
   },
   {
     value: "Không sử dụng",

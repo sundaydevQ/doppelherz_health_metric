@@ -20,7 +20,15 @@ export const surveyQuestionsSchema = Yup.object({
     age: Yup.string()
       .required("Vui lòng chọn độ tuổi của bạn")
       .oneOf(
-        ["under30", "30-34", "35-39", "40-44", "45-49", "50-54", "55plus"],
+        [
+          "Dưới 30 tuổi",
+          "30 - 34 tuổi",
+          "35 - 39 tuổi",
+          "40 - 44 tuổi",
+          "45 - 49 tuổi",
+          "50 - 54 tuổi",
+          "55 tuổi trở lên",
+        ],
         "Vui lòng chọn một độ tuổi hợp lệ từ danh sách"
       ),
   }),

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Outlet, useMatchRoute } from "@tanstack/react-router";
 import { ResponsiveNavBar } from "../../shared/components";
-import { authService } from "../services/authService";
 import { getUserInfo } from "../services";
 
 const RootLayout: React.FC = () => {

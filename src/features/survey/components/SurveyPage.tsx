@@ -238,8 +238,9 @@ const SurveyPage: React.FC = () => {
       const body = filterFormDataWithPriority(values);
       if (body) {
         console.log("body", body);
+        const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
-        await addSurveyData(body);
+        await addSurveyData(spreadsheetId, body);
         actions.setSubmitting(false);
         setIsSurveyComplete(true); // Set survey completion state
       }

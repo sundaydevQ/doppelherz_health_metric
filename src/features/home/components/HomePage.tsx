@@ -15,6 +15,10 @@ import {
 import Carousel from "../../../shared/components/Carousel";
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react"; // Removed Typography, assuming it's not a direct export or will be handled by standard HTML tags
 import DoctorImage from "../../../assets/images/doctor.png"; // Importing the doctor image directly
+import Slide1 from "../../../assets/images/slide1.png"; // Importing slide images directly
+import Slide2 from "../../../assets/images/slide2.png"; // Importing slide images directly
+import Slide3 from "../../../assets/images/slide3.png"; // Importing slide images directly
+import Slide4 from "../../../assets/images/slide4.png"; // Importing slide images directly
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,23 +30,23 @@ const HomePage: React.FC = () => {
     {
       title: "Doppelherz Health Metric",
       description: "Cân bằng nội tiết tố, tối ưu hóa sức khỏe toàn diện.",
-      illustration: "src/assets/images/slide1.png",
+      illustration: Slide1,
     },
     {
       title: "Theo dõi sức khỏe",
       description: "Giám sát các chỉ số sức khỏe của bạn một cách dễ dàng.",
-      illustration: "src/assets/images/slide2.png",
+      illustration: Slide2,
     },
     {
       title: "Phân tích cá nhân hóa",
       description:
         "Nhận các khuyến nghị sức khỏe dựa trên hồ sơ riêng của bạn.",
-      illustration: "src/assets/images/slide3.png",
+      illustration: Slide3,
     },
     {
       title: "Báo cáo tiến độ",
       description: "Xem báo cáo chi tiết về hành trình sức khỏe của bạn.",
-      illustration: "src/assets/images/slide4.png",
+      illustration: Slide4,
     },
   ];
 

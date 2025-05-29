@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import LogoImages from "../../assets/images/logo.png"; // Adjust the path as necessary
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -302,7 +303,7 @@ export const NavbarLogo = () => {
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black lg:h-[72px] lg:flex lg:items-center"
     >
       <img
-        src="/src/assets/images/logo.png" // Update this path to your logo
+        src={LogoImages} // Update this path to your logo
         alt="logo"
         width={42}
         height={42}

@@ -17,7 +17,8 @@ import { INITIAL_SCORE } from "./scoringConfig";
 import SurveyCompletionPopup from "./SurveyCompletionPopup"; // Added import
 import { addSurveyData } from "../../../shared";
 
-const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEET_ID;
+const spreadsheetId =
+  import.meta.env.VITE_GOOGLE_SHEET_ID || "your-google-sheet-id"; // Replace with your actual Google Sheet ID
 
 // Initial steps data
 const initialSteps: Step[] = [

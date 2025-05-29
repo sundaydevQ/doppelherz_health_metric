@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "@tanstack/react-router";
 import type { Step } from "./types";
+import LogoImage from "../../../assets/images/logo.png"; // Adjust the path as needed
 
 interface StepProgressProps {
   steps: Step[];
@@ -34,7 +35,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
             aria-label="Go to home page"
           >
             <img
-              src="/src/assets/images/logo.png"
+              src={LogoImage}
               alt="Doppelherz"
               className="h-20 cursor-pointer"
             />

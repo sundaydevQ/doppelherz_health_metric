@@ -7,6 +7,7 @@ import { useAuth } from "../../../shared/hooks"; // Added import for useAuth
 import { authService } from "../../../shared/services/authService"; // Import authService
 // Assuming you might want a Google icon, e.g., from heroicons
 // import { DeviceTabletIcon } from "@heroicons/react/24/outline"; // Placeholder for a Google-like icon
+import LogoImage from "../../../assets/images/logo.png"; // Adjust the path as needed
 
 // Define an interface for expected search params on the login route
 interface LoginSearch {
@@ -128,7 +129,7 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col justify-center items-center p-4">
       <Card className="w-full max-w-md bg-white shadow-xl rounded-xl p-8 md:p-12 text-center">
         <img
-          src="/src/assets/images/logo.png"
+          src={LogoImage}
           alt="Doppelherz Logo"
           className="w-32 h-auto mx-auto mb-8"
         />

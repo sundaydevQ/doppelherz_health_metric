@@ -6,6 +6,7 @@ import { HomePage } from "./features/home";
 import { LoginPage } from "./features/auth";
 import { SurveyPage } from "./features/survey";
 import { SurveyAnalysisPage } from "./features/survey";
+import { authService } from "./shared/services/authService";
 
 // Create a root route
 const rootRoute = new RootRoute({
@@ -23,6 +24,21 @@ const homeRoute = new Route({
 const loginRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/login",
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
+    return {
+      redirect: search.redirect as string | undefined,
+    };
+  },
+  beforeLoad: ({ search }) => {
+    // If user is already authenticated, redirect them to the intended page or home
+    if (authService.isAuthenticated()) {
+      const redirectTo = search.redirect || "/";
+      throw redirect({
+        to: redirectTo,
+        replace: true,
+      });
+    }
+  },
   component: LoginPage,
 });
 
@@ -30,6 +46,16 @@ const loginRoute = new Route({
 const surveyRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/survey",
+  beforeLoad: () => {
+    // Check if user is authenticated
+    if (!authService.isAuthenticated()) {
+      // Store the current path to redirect back after login
+      throw redirect({
+        to: "/login",
+        replace: true,
+      });
+    }
+  },
   component: SurveyPage,
 });
 
@@ -47,10 +73,19 @@ const surveyAnalysisRoute = new Route({
     };
   },
   beforeLoad: () => {
-    // Check if survey is completed in localStorage
-    const isComplete = localStorage.getItem("isComplete");
+    // Check if user is authenticated first
+    if (!authService.isAuthenticated()) {
+      // Store the current path to redirect back after login
+      throw redirect({
+        to: "/",
+        replace: true,
+      });
+    }
 
-    if (isComplete !== "true") {
+    // Check if survey is completed in localStorage
+    const isCompleteSurvey = localStorage.getItem("isCompleteSurvey");
+
+    if (isCompleteSurvey !== "true") {
       // If survey is not completed, redirect to survey page
       throw redirect({
         to: "/survey",

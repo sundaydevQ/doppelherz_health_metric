@@ -120,7 +120,6 @@ const DietAssessmentForm: React.FC<DietAssessmentFormProps> = ({
   };
 
   const handleNextWithValidation = async () => {
-    return handleNext();
     setIsValidating(true);
     try {
       // Mark all fields for step 4 as touched to trigger validation

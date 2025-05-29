@@ -142,7 +142,6 @@ const HealthInfoForm: React.FC<HealthInfoFormProps> = ({
   };
 
   const handleNextWithValidation = async () => {
-    return handleNext();
     setIsValidating(true);
     try {
       // Mark all fields for step 3 as touched to trigger validation

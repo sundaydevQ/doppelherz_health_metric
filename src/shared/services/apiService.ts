@@ -149,38 +149,21 @@ export async function updateUserProfile(profile: {
   );
 }
 
+export const getUserInfo = async (): Promise<
+  ApiResponse<{ id: string; email: string; name: string; picture?: string }>
+> => {
+  return request("https://www.googleapis.com/oauth2/v3/userinfo", "GET");
+};
+
 export async function addSurveyData(
-  body?: unknown
+  body: Array<string | number | boolean>
 ): Promise<ApiResponse<unknown>> {
   const spreadsheetId = import.meta.env.VITE_GOOGLE_SHEET_ID;
-  return request<{ id: string; email: string; name: string; picture?: string }>(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Doppelherz Health Metric Application:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&alt=json`,
+  return request(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Data!A:A:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
     "POST",
     {
-      values: [
-        [
-          "Sample Name",
-          new Date().toLocaleDateString(),
-          "sample@email.com",
-          "123-456-7890",
-          "Computer Science",
-        ],
-      ],
+      values: [body],
     }
-  );
-}
-
-// Health tracking related endpoints
-export async function getHealthMetrics(): Promise<ApiResponse<unknown[]>> {
-  return request<unknown[]>("/health/metrics");
-}
-
-export async function submitSurveyData(
-  surveyData: unknown
-): Promise<ApiResponse<{ id: string; submitted: boolean }>> {
-  return request<{ id: string; submitted: boolean }>(
-    "/survey",
-    "POST",
-    surveyData
   );
 }

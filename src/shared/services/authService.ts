@@ -42,11 +42,10 @@ export class AuthService {
     const user = localStorage.getItem("user");
     return !!(token && user);
   }
-
   /**
    * Handle logout - clear all auth data and redirect to login
    */
-  public handleLogout(): void {
+  public handleLogout(currentPath?: string): void {
     // Clear all authentication data
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
@@ -55,8 +54,9 @@ export class AuthService {
     // Trigger a custom event that the AuthContext can listen to
     window.dispatchEvent(new CustomEvent("auth:logout"));
 
-    // Redirect to login page
-    window.location.href = "/login";
+    // Redirect to login page with optional redirect parameter
+    if (currentPath && !["/", "login"].includes(currentPath))
+      window.location.href = "/";
   }
 
   /**
@@ -64,7 +64,9 @@ export class AuthService {
    */
   public handleUnauthorized(): void {
     console.warn("Unauthorized access detected. Logging out user.");
-    this.handleLogout();
+    // Get current path to redirect back after re-authentication
+    const currentPath = window.location.pathname;
+    this.handleLogout(currentPath);
   }
 }
 

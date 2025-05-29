@@ -138,7 +138,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col">
       {/* Mobile and Small Tablets View (< 1024px) */}
-      <div className="lg:hidden flex flex-col min-h-screen bg-gradient-to-br from-white to-[#f7f5ff] relative">
+      <div className="lg:hidden flex flex-col min-h-screen  relative">
         {/* Main content section with carousel */}
         <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-8 pb-16 mt-8">
           {/* Carousel container - Responsive sizing */}
@@ -213,7 +213,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
       {/* Desktop View (≥ 1024px) */}
-      <div className="hidden lg:block min-h-screen bg-gradient-to-br from-white to-[#f7f5ff]">
+      <div className="hidden lg:block min-h-screen ">
         {/* Hero section - Improved responsive sizing */}
         <BackgroundBeamsWithCollision>
           <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 gap-8 lg:gap-12">

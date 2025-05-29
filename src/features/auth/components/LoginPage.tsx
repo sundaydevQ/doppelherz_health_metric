@@ -96,10 +96,9 @@ const LoginPage: React.FC = () => {
     },
     // flow: 'auth-code', // If you need to get an auth code for your backend
   });
-
   React.useEffect(() => {
     if (authContext && authContext.isAuthenticated) {
-      const redirectTo = search.redirect || "/survey"; // Changed default redirect to /survey
+      const redirectTo = search.redirect || "/"; // Default redirect to home page
       navigate({ to: redirectTo, replace: true });
     }
   }, [authContext, navigate, search.redirect]);

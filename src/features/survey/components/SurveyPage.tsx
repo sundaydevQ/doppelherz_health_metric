@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import type { Step, SurveyFormData, SurveyScore } from "./types";
 import type { FormikHelpers } from "formik";
 import { Form, Formik } from "formik";
-import { useNavigate } from "@tanstack/react-router"; // Changed import
 import StepProgress from "./StepProgress";
 import BasicInfoForm from "./steps/BasicInfoForm";
 import SurveyQuestionsForm from "./steps/SurveyQuestionsForm";
@@ -34,9 +33,9 @@ const initialFormValues: SurveyFormData = {
   step1: {
     fullName: "",
     gender: "",
-    occupation: "",
     phoneNumber: "",
     email: "",
+    occupation: "",
     address: "",
   },
   // Step 2: Survey
@@ -63,7 +62,6 @@ const initialFormValues: SurveyFormData = {
 };
 
 const SurveyPage: React.FC = () => {
-  const navigate = useNavigate(); // Correct hook for @tanstack/react-router
   // State for steps
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [isSurveyComplete, setIsSurveyComplete] = useState(false); // Added state for survey completion
@@ -72,7 +70,7 @@ const SurveyPage: React.FC = () => {
 
   // Reset survey completion status when survey page loads
   useEffect(() => {
-    localStorage.setItem("isComplete", "false");
+    localStorage.setItem("isCompleteSurvey", "false");
   }, []);
 
   // State for current score
@@ -146,30 +144,111 @@ const SurveyPage: React.FC = () => {
       setCurrentStepIndex(stepIndex);
     }
   };
-  const handleClose = async () => {
-    try {
-      await addSurveyData();
-      // setIsSurveyComplete(false);
-      // // Save completion state to localStorage
-      // localStorage.setItem("isComplete", "true");
-      // // Navigate to the analysis page with the score
-      // navigate({
-      //   to: "/survey/analysis/$score",
-      //   params: { score: currentScore.currentScore },
-      // });
-    } catch (error) {
-      console.error("Error handling survey completion:", error);
-    }
+
+  const handleCompleted = () => {
+    setIsSurveyComplete(false); // Reset survey completion state
+    localStorage.setItem("isCompleteSurvey", "true"); // Mark survey as complete in localStorage
+    window.location.href = "/survey/analysis"; // Redirect to analysis page
   };
+
+  const filterFormDataWithPriority = (values: SurveyFormData): string[] => {
+    const result: string[] = [];
+
+    // Step 1: Basic information fields (always include)
+    if (values.step1) {
+      result.push(values.step1.fullName || "");
+      result.push(values.step1.gender || "");
+      result.push(values.step1.phoneNumber || "");
+      result.push(values.step1.email || "");
+      result.push(values.step1.occupation || "");
+      result.push(values.step1.address || "");
+    }
+
+    // Step 2: Age (always include)
+    if (values.step2) {
+      result.push(values.step2.age || "");
+    }
+
+    // Step 3: Physical signs (prioritize array, fall back to other)
+    if (values.step3) {
+      const physicalSigns = values.step3.physicalSigns || [];
+      const otherPhysicalSigns = values.step3.otherPhysicalSigns || "";
+
+      if (physicalSigns.length > 0) {
+        result.push(physicalSigns.join(", "));
+      } else if (otherPhysicalSigns.trim()) {
+        result.push(otherPhysicalSigns.trim());
+      } else {
+        result.push(""); // Maintain structure even if empty
+      }
+    }
+
+    // Step 4: Psychological signs (prioritize array, fall back to other)
+    if (values.step4) {
+      const psychologicalSigns = values.step4.psychologicalSigns || [];
+      const otherPsychologicalSigns =
+        values.step4.otherPsychologicalSigns || "";
+
+      if (psychologicalSigns.length > 0) {
+        result.push(psychologicalSigns.join(", "));
+      } else if (otherPsychologicalSigns.trim()) {
+        result.push(otherPsychologicalSigns.trim());
+      } else {
+        result.push("");
+      }
+    }
+
+    // Step 5: Risk factors (prioritize array, fall back to other)
+    if (values.step5) {
+      const riskFactors = values.step5.riskFactors || [];
+      const otherRiskFactors = values.step5.otherRiskFactors || "";
+
+      if (riskFactors.length > 0) {
+        result.push(riskFactors.join(", "));
+      } else if (otherRiskFactors.trim()) {
+        result.push(otherRiskFactors.trim());
+      } else {
+        result.push("");
+      }
+    }
+
+    // Step 6: Medications (prioritize array, fall back to other)
+    if (values.step6) {
+      const medications = values.step6.medications || [];
+      const otherMedications = values.step6.otherMedications || "";
+
+      if (medications.length > 0) {
+        result.push(medications.join(", "));
+      } else if (otherMedications.trim()) {
+        result.push(otherMedications.trim());
+      } else {
+        result.push("");
+      }
+    }
+
+    return result;
+  };
+
   // Handle form submission
-  const handleSubmit = (
+  const handleSubmit = async (
     values: SurveyFormData,
     actions: FormikHelpers<SurveyFormData>
   ) => {
-    console.log("Form submitted with values:", values);
-    setIsSurveyComplete(true); // Set survey as complete
-    actions.setSubmitting(false);
-  }; // Render form based on current step
+    try {
+      const body = filterFormDataWithPriority(values);
+      if (body) {
+        console.log("body", body);
+
+        await addSurveyData(body);
+        actions.setSubmitting(false);
+        setIsSurveyComplete(true); // Set survey completion state
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  // Render form based on current step
   const renderCurrentStepForm = () => {
     switch (currentStepIndex) {
       case 0:
@@ -265,10 +344,10 @@ const SurveyPage: React.FC = () => {
                     </div>
                   </div>
                 </main>
-              </div>{" "}
+              </div>
               <SurveyCompletionPopup
                 isOpen={isSurveyComplete}
-                onClose={handleClose}
+                onComplete={handleCompleted}
                 title="Khảo sát hoàn tất!"
                 message="Cảm ơn bạn đã hoàn thành khảo sát. Kết quả của bạn đã được ghi nhận."
                 buttonText="Xem kết quả phân tích"

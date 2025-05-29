@@ -4,7 +4,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface SurveyCompletionPopupProps {
   isOpen: boolean;
-  onClose: () => void;
+  onComplete: () => void;
   title?: string;
   message?: string;
   buttonText?: string;
@@ -12,7 +12,7 @@ interface SurveyCompletionPopupProps {
 
 const SurveyCompletionPopup: React.FC<SurveyCompletionPopupProps> = ({
   isOpen,
-  onClose,
+  onComplete,
   title = "Khảo sát hoàn thành!",
   message = "Cảm ơn bạn đã dành thời gian tham gia. Kết quả của bạn đã được ghi nhận.",
   buttonText = "Tuyệt vời!",
@@ -26,7 +26,8 @@ const SurveyCompletionPopup: React.FC<SurveyCompletionPopupProps> = ({
       <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl max-w-sm w-full text-center relative animate-scale-in">
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={onComplete}
+          type="submit"
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
           aria-label="Đóng popup"
         >
@@ -44,7 +45,8 @@ const SurveyCompletionPopup: React.FC<SurveyCompletionPopupProps> = ({
 
         {/* Action Button */}
         <Button
-          onPress={onClose}
+          onPress={onComplete}
+          type="submit"
           className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out"
         >
           {buttonText}

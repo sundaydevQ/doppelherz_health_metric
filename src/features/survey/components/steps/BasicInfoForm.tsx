@@ -16,7 +16,6 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({ handleNext }) => {
   // Get validation and submission functions from Formik context
   const { validateForm, setTouched } = useFormikContext<SurveyFormData>(); // Handler for the next button that validates the form before proceeding
   const handleNextWithValidation = async () => {
-    return handleNext();
     setIsValidating(true);
 
     try {

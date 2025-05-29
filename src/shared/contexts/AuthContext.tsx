@@ -86,8 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error("Error in login function:", error);
       setUser(null);
-      localStorage.removeItem("user");
-      localStorage.removeItem("isAuthenticated");
+      authService.handleLogout(); // Clear auth data on error
     } finally {
       setIsLoading(false);
     }

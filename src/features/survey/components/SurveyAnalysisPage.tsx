@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Button } from "../../../shared";
+import { authService } from "../../../shared/services/authService";
 
 interface AnalysisItem {
   scoreRange: string;
@@ -169,6 +170,12 @@ const SurveyAnalysisPage: React.FC = () => {
   const numericScore = score; // Already a number due to parseParams in router
   const [animatedScore, setAnimatedScore] = useState(0);
 
+  const handleCompleteSurvey = () => {
+    localStorage.setItem("isCompleteSurvey", "false");
+    authService.removeAccessToken();
+    navigate({ to: "/" });
+  };
+
   // Animate score counting up
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -186,9 +193,11 @@ const SurveyAnalysisPage: React.FC = () => {
 
     return () => clearTimeout(timer);
   }, [numericScore]);
+
   useEffect(() => {
     return () => {
-      localStorage.setItem("isComplete", "false");
+      localStorage.setItem("isCompleteSurvey", "false");
+      authService.removeAccessToken();
     };
   }, []);
 
@@ -460,7 +469,7 @@ const SurveyAnalysisPage: React.FC = () => {
         )}
         <div className="mt-10 text-center">
           <Button
-            onPress={() => navigate({ to: "/" })}
+            onPress={handleCompleteSurvey}
             variant="solid"
             className="w-auto py-2.5"
           >

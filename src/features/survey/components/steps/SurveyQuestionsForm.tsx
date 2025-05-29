@@ -76,7 +76,6 @@ const SurveyQuestionsForm: React.FC<SurveyQuestionsFormProps> = ({
   };
 
   const handleNextWithValidation = async () => {
-    return handleNext();
     setIsValidating(true);
     try {
       // Mark all fields for step 2 as touched to trigger validation

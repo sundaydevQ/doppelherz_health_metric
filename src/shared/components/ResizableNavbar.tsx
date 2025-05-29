@@ -67,7 +67,8 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   return (
     <motion.div
       ref={ref}
-      className={cn("fixed inset-x-0 top-0 z-40 w-full", className)}
+      className={cn("fixed inset-x-0 top-0 w-full", className)}
+      style={{ zIndex: 999999 }}
     >
       {React.Children.map(children, (child) =>
         React.isValidElement(child)

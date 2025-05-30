@@ -22,6 +22,8 @@ interface User {
   picture?: string;
 }
 
+const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
+
 const LoginPage: React.FC = () => {
   const authContext = useAuth();
   const navigate = useNavigate();
@@ -31,9 +33,8 @@ const LoginPage: React.FC = () => {
   });
 
   const googleLogin = useGoogleLogin({
+    scope: SCOPES,
     onSuccess: async (tokenResponse) => {
-      // Made async
-      console.log("Google login success (hook):", tokenResponse);
       if (authContext) {
         authContext.setIsLoading(true); // Explicitly set loading in context
         try {
@@ -97,6 +98,7 @@ const LoginPage: React.FC = () => {
     },
     // flow: 'auth-code', // If you need to get an auth code for your backend
   });
+
   React.useEffect(() => {
     if (authContext && authContext.isAuthenticated) {
       const redirectTo = search.redirect || "/"; // Default redirect to home page

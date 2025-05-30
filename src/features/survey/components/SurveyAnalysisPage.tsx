@@ -172,7 +172,7 @@ const SurveyAnalysisPage: React.FC = () => {
 
   const handleCompleteSurvey = () => {
     localStorage.setItem("isCompleteSurvey", "false");
-    authService.removeAccessToken();
+    authService.handleLogout();
     navigate({ to: "/" });
   };
 

@@ -14,14 +14,6 @@ interface LoginSearch {
   redirect?: string;
 }
 
-// Define User interface matching AuthContext (or import it if shared)
-interface User {
-  id?: string;
-  email?: string;
-  name?: string;
-  picture?: string;
-}
-
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
 const LoginPage: React.FC = () => {
@@ -31,57 +23,50 @@ const LoginPage: React.FC = () => {
   const routerIsLoading = useRouterState({
     select: (s) => s.status === "pending",
   });
-
   const googleLogin = useGoogleLogin({
     scope: SCOPES,
     onSuccess: async (tokenResponse) => {
-      if (authContext) {
-        authContext.setIsLoading(true); // Explicitly set loading in context
-        try {
-          const userInfoResponse = await fetch(
-            "https://www.googleapis.com/oauth2/v3/userinfo",
-            {
-              headers: {
-                Authorization: `Bearer ${tokenResponse.access_token}`,
-              },
-            }
-          );
-
-          if (!userInfoResponse.ok) {
-            const errorData = await userInfoResponse.json().catch(() => ({
-              message:
-                "Failed to fetch user info, and error response was not JSON.",
-            }));
-            console.error(
-              "Failed to fetch user info:",
-              userInfoResponse.status,
-              errorData
-            );
-            throw new Error(
-              `Failed to fetch user info: ${userInfoResponse.status} ${
-                errorData.message || ""
-              }`.trim()
-            );
+      try {
+        const userInfoResponse = await fetch(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
           }
+        );
 
-          const userInfo = await userInfoResponse.json();
-          const loggedInUser: User = {
-            id: userInfo.sub,
-            email: userInfo.email,
-            name: userInfo.name,
-            picture: userInfo.picture,
-          }; // Save the access token using authService
-          authService.setAccessToken(tokenResponse.access_token);
-
-          // Pass the fetched user object directly to the login function
-          authContext.login(loggedInUser);
-        } catch (error) {
-          console.error("Error during Google login process:", error);
-          // Ensure logout or error state is properly handled in AuthContext if login fails
-          authContext.logout(); // Or a specific error handling function
-        } finally {
-          // setIsLoading will be handled by the login/logout functions in AuthContext
+        if (!userInfoResponse.ok) {
+          const errorData = await userInfoResponse.json().catch(() => ({
+            message:
+              "Failed to fetch user info, and error response was not JSON.",
+          }));
+          console.error(
+            "Failed to fetch user info:",
+            userInfoResponse.status,
+            errorData
+          );
+          throw new Error(
+            `Failed to fetch user info: ${userInfoResponse.status} ${
+              errorData.message || ""
+            }`.trim()
+          );
         }
+
+        // Validate that we can access user info (but we don't need to store it)
+        const userInfo = await userInfoResponse.json();
+
+        // Save the access token using authService
+        authService.setAccessToken(tokenResponse.access_token);
+        authContext.login(userInfo);
+
+        // Redirect to the intended page or home
+        const redirectTo = search.redirect || "/";
+        navigate({ to: redirectTo, replace: true });
+      } catch (error) {
+        console.error("Error during Google login process:", error);
+        // Handle error by removing any partially set tokens
+        authService.removeAccessToken();
       }
     },
 
@@ -90,34 +75,26 @@ const LoginPage: React.FC = () => {
       error_description?: string;
       error_uri?: string;
     }) => {
-      // Typed errorResponse
       console.error("Login Failed (hook):", errorResponse);
-      if (authContext) {
-        authContext.logout(); // Or handle error state
-      }
+      // Clean up any auth state on error
+      authService.removeAccessToken();
     },
-    // flow: 'auth-code', // If you need to get an auth code for your backend
   });
 
   React.useEffect(() => {
-    if (authContext && authContext.isAuthenticated) {
-      const redirectTo = search.redirect || "/"; // Default redirect to home page
+    // If user is already authenticated, redirect them
+    if (authService.isAuthenticated()) {
+      const redirectTo = search.redirect || "/";
       navigate({ to: redirectTo, replace: true });
     }
-  }, [authContext, navigate, search.redirect]);
-
-  // Wait for router to be ready and auth context to be available
-  if (routerIsLoading || !authContext) {
+  }, [navigate, search.redirect]);
+  // Wait for router to be ready
+  if (routerIsLoading) {
     return <p className="text-center p-10">Initializing...</p>;
   }
 
-  // Auth context is available, now check its loading state
-  if (authContext.isLoading) {
-    return <p className="text-center p-10">Loading authentication...</p>;
-  }
-
-  // If already authenticated (and auth is loaded), the useEffect will redirect.
-  if (authContext.isAuthenticated) {
+  // If already authenticated, show loading while redirect happens
+  if (authService.isAuthenticated()) {
     return (
       <p className="text-center p-10">Already logged in. Redirecting...</p>
     );

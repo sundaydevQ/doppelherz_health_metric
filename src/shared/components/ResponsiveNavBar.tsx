@@ -11,6 +11,7 @@ import {
   NavBody,
   NavItems,
 } from "./ResizableNavbar";
+import { authService } from "../services/authService";
 
 const ResizableResponsiveNavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +82,11 @@ const ResizableResponsiveNavBar: React.FC = () => {
       : menuItemsRaw;
 
   const handleNavigateToLogin = () => {
-    navigate({ to: "/login" });
+    if (authService.isAuthenticated()) {
+      navigate({ to: "/survey" });
+    } else {
+      navigate({ to: "/login" });
+    }
   };
 
   return (

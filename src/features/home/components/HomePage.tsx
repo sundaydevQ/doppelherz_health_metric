@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "../../../shared/hooks"; // Import useAuth
+import { authService } from "../../../shared/services/authService"; // Import authService instead of useAuth
 import {
   BackgroundBeamsWithCollision,
   // ResponsiveGrid, // No longer used
@@ -22,7 +22,6 @@ import Slide4 from "../../../assets/images/slide4.png"; // Importing slide image
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const auth = useAuth(); // Use the auth context
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Onboarding slides data - Add illustration components directly
@@ -131,9 +130,8 @@ const HomePage: React.FC = () => {
   // const handlePrevSlide = () => {
   //   setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   // };
-
   const handleStartNavigation = () => {
-    if (auth?.isAuthenticated) {
+    if (authService.isAuthenticated()) {
       navigate({ to: "/survey" });
     } else {
       navigate({ to: "/login" });

@@ -1,9 +1,9 @@
 import React from "react";
-import { useGoogleLogin } from "@react-oauth/google";
+// import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate, useSearch, useRouterState } from "@tanstack/react-router";
 import { Card } from "@heroui/react";
-import Button from "../../../shared/components/Button"; // Import Button
-import { useAuth } from "../../../shared/hooks"; // Added import for useAuth
+// import Button from "../../../shared/components/Button";
+// import { useAuth } from "../../../shared/hooks";
 import { authService } from "../../../shared/services/authService"; // Import authService
 // Assuming you might want a Google icon, e.g., from heroicons
 // import { DeviceTabletIcon } from "@heroicons/react/24/outline"; // Placeholder for a Google-like icon
@@ -15,72 +15,73 @@ interface LoginSearch {
   redirect?: string;
 }
 
-const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
+// const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
 const LoginPage: React.FC = () => {
-  const authContext = useAuth();
+  // const authContext = useAuth();
   const navigate = useNavigate();
   const search = useSearch({ from: "/login" }) as LoginSearch;
   const routerIsLoading = useRouterState({
     select: (s) => s.status === "pending",
   });
-  const googleLogin = useGoogleLogin({
-    scope: SCOPES,
-    onSuccess: async (tokenResponse) => {
-      try {
-        const userInfoResponse = await fetch(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-          }
-        );
 
-        if (!userInfoResponse.ok) {
-          const errorData = await userInfoResponse.json().catch(() => ({
-            message:
-              "Failed to fetch user info, and error response was not JSON.",
-          }));
-          console.error(
-            "Failed to fetch user info:",
-            userInfoResponse.status,
-            errorData
-          );
-          throw new Error(
-            `Failed to fetch user info: ${userInfoResponse.status} ${
-              errorData.message || ""
-            }`.trim()
-          );
-        }
+  // const googleLogin = useGoogleLogin({
+  //   scope: SCOPES,
+  //   onSuccess: async (tokenResponse) => {
+  //     try {
+  //       const userInfoResponse = await fetch(
+  //         "https://www.googleapis.com/oauth2/v3/userinfo",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${tokenResponse.access_token}`,
+  //           },
+  //         }
+  //       );
 
-        // Validate that we can access user info (but we don't need to store it)
-        const userInfo = await userInfoResponse.json();
+  //       if (!userInfoResponse.ok) {
+  //         const errorData = await userInfoResponse.json().catch(() => ({
+  //           message:
+  //             "Failed to fetch user info, and error response was not JSON.",
+  //         }));
+  //         console.error(
+  //           "Failed to fetch user info:",
+  //           userInfoResponse.status,
+  //           errorData
+  //         );
+  //         throw new Error(
+  //           `Failed to fetch user info: ${userInfoResponse.status} ${
+  //             errorData.message || ""
+  //           }`.trim()
+  //         );
+  //       }
 
-        // Save the access token using authService
-        authService.setAccessToken(tokenResponse.access_token);
-        authContext.login(userInfo);
+  //       // Validate that we can access user info (but we don't need to store it)
+  //       const userInfo = await userInfoResponse.json();
 
-        // Redirect to the intended page or home
-        const redirectTo = search.redirect || "/";
-        navigate({ to: redirectTo, replace: true });
-      } catch (error) {
-        console.error("Error during Google login process:", error);
-        // Handle error by removing any partially set tokens
-        authService.removeAccessToken();
-      }
-    },
+  //       // Save the access token using authService
+  //       authService.setAccessToken(tokenResponse.access_token);
+  //       authContext.login(userInfo);
 
-    onError: (errorResponse: {
-      error?: string;
-      error_description?: string;
-      error_uri?: string;
-    }) => {
-      console.error("Login Failed (hook):", errorResponse);
-      // Clean up any auth state on error
-      authService.removeAccessToken();
-    },
-  });
+  //       // Redirect to the intended page or home
+  //       const redirectTo = search.redirect || "/";
+  //       navigate({ to: redirectTo, replace: true });
+  //     } catch (error) {
+  //       console.error("Error during Google login process:", error);
+  //       // Handle error by removing any partially set tokens
+  //       authService.removeAccessToken();
+  //     }
+  //   },
+
+  //   onError: (errorResponse: {
+  //     error?: string;
+  //     error_description?: string;
+  //     error_uri?: string;
+  //   }) => {
+  //     console.error("Login Failed (hook):", errorResponse);
+  //     // Clean up any auth state on error
+  //     authService.removeAccessToken();
+  //   },
+  // });
 
   React.useEffect(() => {
     // If user is already authenticated, redirect them
@@ -101,11 +102,11 @@ const LoginPage: React.FC = () => {
     );
   }
 
-  const handleGoogleLogin = () => {
-    setTimeout(() => {
-      googleLogin();
-    }, 10); // Adjust the delay as needed
-  };
+  // const handleGoogleLogin = () => {
+  //   setTimeout(() => {
+  //     googleLogin();
+  //   }, 10);
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col justify-center items-center p-4">

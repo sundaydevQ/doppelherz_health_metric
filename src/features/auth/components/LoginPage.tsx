@@ -8,6 +8,7 @@ import { authService } from "../../../shared/services/authService"; // Import au
 // Assuming you might want a Google icon, e.g., from heroicons
 // import { DeviceTabletIcon } from "@heroicons/react/24/outline"; // Placeholder for a Google-like icon
 import LogoImage from "../../../assets/images/logo.png"; // Adjust the path as needed
+import GoogleLoginButton from "../../../shared/components/GoogleButton";
 
 // Define an interface for expected search params on the login route
 interface LoginSearch {
@@ -122,11 +123,11 @@ const LoginPage: React.FC = () => {
         </p>
 
         <div className="space-y-4">
-          <Button
+          {/* <Button
             onPress={handleGoogleLogin}
             className="w-full  text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out flex items-center justify-center"
           >
-            {/* Placeholder for Google Icon SVG or from heroicons */}
+         
             <svg
               className="w-5 h-5 mr-3"
               xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +153,9 @@ const LoginPage: React.FC = () => {
               />
             </svg>
             Tiếp tục với Google
-          </Button>
+          </Button> */}
+
+          <GoogleLoginButton />
         </div>
 
         <p className="mt-10 text-xs text-gray-500">

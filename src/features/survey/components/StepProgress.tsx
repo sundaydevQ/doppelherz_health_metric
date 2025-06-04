@@ -189,12 +189,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
         <button
           type="button"
           onClick={handleBack}
-          className={`p-2 sm:p-3 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all mobile-step-enhanced ${
-            currentStepIndex === 0
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:shadow-md active:scale-95"
-          }`}
-          disabled={currentStepIndex === 0}
+          className={`p-2 sm:p-3 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all mobile-step-enhancedhover:shadow-md active:scale-95`}
         >
           <ChevronLeftIcon className="h-5 w-5 sm:h-6 sm:w-6" />
           <span className="sr-only">Quay lại</span>

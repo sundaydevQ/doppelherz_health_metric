@@ -101,7 +101,9 @@ const LoginPage: React.FC = () => {
   }
 
   const handleGoogleLogin = () => {
-    googleLogin(); // Call the function from the hook
+    setTimeout(() => {
+      googleLogin();
+    }, 10); // Adjust the delay as needed
   };
 
   return (

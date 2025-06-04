@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Step, SurveyFormData, SurveyScore } from "./types";
 import type { FormikHelpers } from "formik";
 import { Form, Formik } from "formik";
@@ -66,6 +67,8 @@ const initialFormValues: SurveyFormData = {
 };
 
 const SurveyPage: React.FC = () => {
+  const navigate = useNavigate();
+
   // State for steps
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [isSurveyComplete, setIsSurveyComplete] = useState(false); // Added state for survey completion
@@ -110,10 +113,12 @@ const SurveyPage: React.FC = () => {
       setCurrentStepIndex(currentStepIndex + 1);
     }
   };
-
   // Handle back step
   const handleBack = () => {
-    if (currentStepIndex > 0) {
+    if (currentStepIndex === 0) {
+      // If at step 1 (index 0), navigate to home page
+      navigate({ to: "/" });
+    } else if (currentStepIndex > 0) {
       // Update step statuses
       const updatedSteps = [...steps];
       updatedSteps[currentStepIndex].status = "upcoming";

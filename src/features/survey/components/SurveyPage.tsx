@@ -20,8 +20,6 @@ import { addSurveyData } from "../../../shared";
 
 const GOOGLE_SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID; // Replace with your actual Google Sheet ID
 
-console.log(`Using Google Sheet ID: ${import.meta.env.VITE_GOOGLE_SHEET_ID}`); // Log the Google Sheet ID for debugging
-
 // Initial steps data
 const initialSteps: Step[] = [
   { id: "01", name: "Thông tin cơ bản", status: "current" },

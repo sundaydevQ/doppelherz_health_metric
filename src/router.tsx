@@ -28,13 +28,12 @@ const loginRoute = new Route({
     return {
       redirect: search.redirect as string | undefined,
     };
-  },
-  beforeLoad: ({ search }) => {
-    // If user is already authenticated, redirect them to the intended page or home
+  },  beforeLoad: () => {
+    // If user is already authenticated, redirect them to home page
     if (authService.isAuthenticated()) {
-      const redirectTo = search.redirect || "/";
+      // Always redirect to home page, ignore redirect parameter
       throw redirect({
-        to: redirectTo,
+        to: "/",
         replace: true,
       });
     }

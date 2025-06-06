@@ -101,9 +101,11 @@ const LoginPage: React.FC = () => {
   }
 
   const handleGoogleLogin = () => {
+    console.log(">>>>>>>>>>>>");
+
     setTimeout(() => {
       googleLogin();
-    }, 10); // Adjust the delay as needed
+    }, 100); // Adjust the delay as needed
   };
 
   return (

@@ -304,6 +304,7 @@ const SurveyPage: React.FC = () => {
               onScoreUpdate={handleScoreUpdate}
               onScoreDeduction={handleScoreDeduction}
             >
+              {" "}
               <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-surface-50 via-surface-100 to-doppelherz-light/20">
                 <StepProgress
                   steps={steps}

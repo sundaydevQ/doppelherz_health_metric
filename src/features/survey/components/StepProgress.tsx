@@ -183,7 +183,7 @@ const StepProgress: React.FC<StepProgressProps> = ({
             ))}
           </ol>
         </nav>
-      </aside>
+      </aside>{" "}
       {/* Enhanced Mobile Header */}
       <div className="lg:hidden flex items-center justify-between my-4 px-2 sm:px-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 py-4">
         <button
@@ -385,29 +385,6 @@ const StepProgress: React.FC<StepProgressProps> = ({
           </div>
         </div>
       )}
-      {/* Enhanced progress bar for mobile */}
-      <div className="lg:hidden my-4 px-2 sm:px-4">
-        <div className="relative">
-          <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full shadow-sm step-progress-bar relative overflow-hidden"
-              style={{
-                width: `${((currentStepIndex + 1) / steps.length) * 100}%`,
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
-            </div>
-          </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-600">
-            <span className="font-medium">
-              Bước {currentStepIndex + 1} / {steps.length}
-            </span>
-            <span className="text-green-600 font-medium">
-              {Math.round(((currentStepIndex + 1) / steps.length) * 100)}%
-            </span>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

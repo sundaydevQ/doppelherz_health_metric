@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getScoreRange } from "./scoringConfig";
 import type { SurveyScore } from "./types";
+import GaugeChart from "./GaugeChart";
 
 interface ScoreDisplayProps {
   score: SurveyScore;
@@ -48,45 +49,14 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Progress Bar */}
-      <div className="mb-3">
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Tình trạng:</span>
-          <span className={scoreRange.color}>{scoreRange.label}</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className={`h-3 rounded-full transition-all duration-500 ease-in-out ${
-              percentage >= 85
-                ? "bg-green-500"
-                : percentage >= 65
-                ? "bg-yellow-500"
-                : percentage >= 40
-                ? "bg-orange-500"
-                : "bg-red-500"
-            }`}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Score Range Badge */}
-      <div
-        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${scoreRange.bgColor} ${scoreRange.color}`}
-      >
-        <div
-          className={`w-2 h-2 rounded-full mr-2 ${
-            percentage >= 85
-              ? "bg-green-500"
-              : percentage >= 65
-              ? "bg-yellow-500"
-              : percentage >= 40
-              ? "bg-orange-500"
-              : "bg-red-500"
-          }`}
+      {/* Gauge Chart Component */}
+      <div>
+        <GaugeChart
+          score={currentScore}
+          maxScore={maxScore}
+          minScore={0}
+          scoreLabel={scoreRange.label}
         />
-        {scoreRange.label}
       </div>
 
       {/* Mobile responsive text */}

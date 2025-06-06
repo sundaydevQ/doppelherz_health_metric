@@ -141,16 +141,16 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col">
       {/* Mobile and Small Tablets View (< 1024px) */}
-      <div className="lg:hidden flex flex-col min-h-screen  relative">
+      <div className="lg:hidden flex flex-col min-h-screen relative">
         {/* Main content section with carousel */}
-        <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-8 pb-16 mt-8">
+        <div className="flex-grow flex flex-col items-center px-4 sm:px-8 pb-16 mt-8">
           {/* Carousel container - Responsive sizing */}
           <div className="w-full max-w-xs mb-6 sm:mb-8">
             <Carousel
               items={slides.map((slide, index) => (
                 <div
                   key={index}
-                  className="rounded-3xl w-full aspect-square bg-gradient-to-b from-[#8c62e3] to-[#6942af] flex items-center justify-center overflow-hidden"
+                  className="rounded-3xl w-full aspect-square flex items-center justify-center overflow-hidden"
                 >
                   <div className="flex items-center justify-center w-full h-full">
                     <img

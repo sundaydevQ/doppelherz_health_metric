@@ -305,8 +305,7 @@ export const NavbarLogo = () => {
       <img
         src={LogoImages} // Update this path to your logo
         alt="logo"
-        width={42}
-        height={42}
+        className="w-[56px] h-[56px] sm:w-[62px] sm:h-[62px] lg:w-[50px] lg:h-[50px]" // Larger on mobile, original size on desktop
       />
     </Link>
   );

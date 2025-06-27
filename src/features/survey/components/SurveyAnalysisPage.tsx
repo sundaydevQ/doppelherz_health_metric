@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Button } from "../../../shared";
-import { authService } from "../../../shared/services/authService";
 
 interface AnalysisItem {
   scoreRange: string;
@@ -169,11 +168,9 @@ const SurveyAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
   const numericScore = score; // Already a number due to parseParams in router
   const [animatedScore, setAnimatedScore] = useState(0);
-
   const handleCompleteSurvey = () => {
-    localStorage.setItem("isCompleteSurvey", "false");
-    authService.handleLogout();
-    navigate({ to: "/" });
+    // Navigate to thank you page instead of going directly home
+    navigate({ to: "/survey/thank-you" });
   };
 
   // Animate score counting up
@@ -194,12 +191,12 @@ const SurveyAnalysisPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [numericScore]);
 
-  useEffect(() => {
-    return () => {
-      localStorage.setItem("isCompleteSurvey", "false");
-      authService.removeAccessToken();
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     localStorage.setItem("isCompleteSurvey", "false");
+  //     authService.removeAccessToken();
+  //   };
+  // }, []);
 
   if (numericScore === undefined || isNaN(numericScore)) {
     return (

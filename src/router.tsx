@@ -4,8 +4,11 @@ import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import { RootLayout } from "./shared/layouts";
 import { HomePage } from "./features/home";
 import { LoginPage } from "./features/auth";
-import { SurveyPage } from "./features/survey";
-import { SurveyAnalysisPage } from "./features/survey";
+import {
+  SurveyPage,
+  SurveyAnalysisPage,
+  ThankYouPage,
+} from "./features/survey";
 import { authService } from "./shared/services/authService";
 
 // Create a root route
@@ -96,12 +99,20 @@ const surveyAnalysisRoute = new Route({
   component: SurveyAnalysisPage,
 });
 
+// Create route for the thank you page
+const thankYouRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/survey/thank-you",
+  component: ThankYouPage,
+});
+
 // Create the route tree
 const routeTree = rootRoute.addChildren([
   homeRoute,
   loginRoute,
   surveyRoute,
   surveyAnalysisRoute, // Added surveyAnalysisRoute
+  thankYouRoute, // Added thankYouRoute
 ]);
 
 // Create the router instance

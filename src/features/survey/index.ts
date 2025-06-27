@@ -1,6 +1,7 @@
 // Survey feature barrel file
 export { default as SurveyPage } from "./components/SurveyPage";
 export { default as SurveyAnalysisPage } from "./components/SurveyAnalysisPage";
+export { default as ThankYouPage } from "./components/ThankYouPage";
 export { default as InputField } from "./components/InputField";
 export { default as StepProgress } from "./components/StepProgress";
 

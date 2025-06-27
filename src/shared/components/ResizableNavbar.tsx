@@ -69,7 +69,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
     <motion.div
       ref={ref}
       className={cn("fixed inset-x-0 top-0 w-full", className)}
-      style={{ zIndex: 999999 }}
+      style={{ zIndex: 99 }}
     >
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
@@ -290,9 +290,9 @@ export const MobileNavToggle = ({
   onClick: () => void;
 }) => {
   return isOpen ? (
-    <IconX className="text-white" onClick={onClick} />
+    <IconX className="text-black" onClick={onClick} />
   ) : (
-    <IconMenu2 className="text-white" onClick={onClick} />
+    <IconMenu2 className="text-black" onClick={onClick} />
   );
 };
 

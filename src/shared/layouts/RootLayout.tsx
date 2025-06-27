@@ -5,6 +5,7 @@ import { getUserInfo } from "../services";
 
 const RootLayout: React.FC = () => {
   const matchSurvey = useMatchRoute()({ to: "/survey" });
+  const matchThankPage = useMatchRoute()({ to: "/survey/thank-you" });
   const matchLogin = useMatchRoute()({ to: "/login" });
 
   const fetchUserInfo = async () => {
@@ -26,16 +27,15 @@ const RootLayout: React.FC = () => {
   return (
     <div className="relative min-h-screen flex flex-col w-full box-border overflow-x-hidden">
       {/* Background for top 2/5 - Mobile only */}
-      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-br from-[#A07FEA] to-[#805AD5] lg:hidden rounded-bl-3xl rounded-br-3xl"></div>
+      <div className="absolute top-0 left-0 right-0 h-80 lg:hidden rounded-bl-3xl rounded-br-3xl"></div>
 
       {/* Responsive Navigation Bar */}
-      {!matchSurvey && !matchLogin && <ResponsiveNavBar />}
+      {!matchSurvey && !matchLogin && !matchThankPage && <ResponsiveNavBar />}
 
       {/* Main Content - Full width with top padding for navbar */}
       <main className="flex-grow w-full box-border z-0">
-        {" "}
         {/* Ensure content is above the background */}
-        {!matchSurvey && !matchLogin && (
+        {!matchSurvey && !matchLogin && !matchThankPage && (
           <div className="h-16 lg:h-[72px]"></div>
         )}
         <Outlet />

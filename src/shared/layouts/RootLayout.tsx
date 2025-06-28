@@ -7,6 +7,7 @@ const RootLayout: React.FC = () => {
   const matchSurvey = useMatchRoute()({ to: "/survey" });
   const matchThankPage = useMatchRoute()({ to: "/survey/thank-you" });
   const matchLogin = useMatchRoute()({ to: "/login" });
+  const matchAnalysis = useMatchRoute()({ to: "/survey/analysis/$score" });
 
   const fetchUserInfo = async () => {
     try {
@@ -27,7 +28,11 @@ const RootLayout: React.FC = () => {
   return (
     <div className="relative min-h-screen flex flex-col w-full box-border overflow-x-hidden">
       {/* Background for top 2/5 - Mobile only */}
-      <div className="absolute top-0 left-0 right-0 h-80 lg:hidden rounded-bl-3xl rounded-br-3xl"></div>
+      <div
+        className={`absolute top-0 left-0 right-0 h-80 ${
+          !matchAnalysis ? "bg-gradient-to-br from-[#A07FEA] to-[#805AD5]" : ""
+        } lg:hidden rounded-bl-3xl rounded-br-3xl`}
+      ></div>
 
       {/* Responsive Navigation Bar */}
       {!matchSurvey && !matchLogin && !matchThankPage && <ResponsiveNavBar />}
